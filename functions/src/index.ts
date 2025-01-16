@@ -8,5 +8,4 @@ if (!admin.apps.length) {
 }
 export const dbFirestore = admin.firestore();
 
-
 export const api = functions.https.onRequest(app);
