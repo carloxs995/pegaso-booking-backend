@@ -7,7 +7,7 @@ import {Request, Response} from 'express';
  * @param {Response} res - The response object.
  * @return {Promise<void>} The response with the created booking ID.
  */
-export async function deleteBooking(req: Request, res: Response): Promise<void> {
+export async function deleteBookingHandler(req: Request, res: Response): Promise<void> {
   const {id} = req.params;
   try {
     await dbFirestore.collection('bookings').doc(id).delete();

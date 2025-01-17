@@ -10,9 +10,8 @@ import { IBookingBase } from '../../models/booking.model';
  * @param {Response} res - The response object.
  * @return {Promise<void>} The response with the created booking ID.
  */
-export async function createBookingHandler(req: Request<IBookingBase>, res: Response): Promise<void> {
+export async function createBookingHandler(req: Request<any, any, IBookingBase>, res: Response): Promise<void> {
     try {
-        console.log(req);
         const data = BookingValidator.parseCreation(req.body);
         const docRef = await dbFirestore.collection('bookings').add(data);
         res.status(201).json({ id: docRef.id });
@@ -23,6 +22,7 @@ export async function createBookingHandler(req: Request<IBookingBase>, res: Resp
                 errors: error.errors,
             });
         }
+
         console.error('Errore POST /bookings:', error);
         res.status(500).json({ error: error?.message });
     }

@@ -7,7 +7,7 @@ import {Request, Response} from 'express';
  * @param {Response} res - The response object.
  * @return {Promise<void>} The response with the created booking ID.
  */
-export async function updateBooking(req: Request, res: Response): Promise<void> {
+export async function updateBookingHandler(req: Request, res: Response): Promise<void> {
   const {id} = req.params;
   const data = req.body;
   try {

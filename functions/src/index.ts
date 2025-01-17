@@ -4,7 +4,9 @@ import * as admin from 'firebase-admin';
 import app from './app';
 
 if (!admin.apps.length) {
-  admin.initializeApp();
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault()
+  });
 }
 export const dbFirestore = admin.firestore();
 
