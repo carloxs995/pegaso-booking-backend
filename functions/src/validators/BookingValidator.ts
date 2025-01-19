@@ -2,40 +2,65 @@ import { z } from 'zod';
 import { IBookingBase, IBookingDetails } from '../models/booking.model';
 
 export class BookingValidator {
-    static readonly PaymentMethodSchema = z.enum(['credit_card', 'paypal', 'cash']);
+    static readonly PaymentMethodSchema = z.enum(
+        ['credit_card', 'paypal', 'cash'],
+        {
+            message: 'PaymentMethodSchema not valid'
+        }
+    );
 
-    static readonly RoomTypeSchema = z.enum(['Standard', 'Deluxe', 'Suite', 'Luxury', 'Penthouse']);
+    static readonly RoomTypeSchema = z.enum(
+        ['Standard', 'Deluxe', 'Suite', 'Luxury', 'Penthouse'],
+        {
+            message: 'RoomTypeSchema not valid'
+        }
+    );
 
-    static readonly BookingBaseSchema = {
-        customerName: z.string().min(1, 'Il nome del cliente è obbligatorio'),
-        customerEmail: z.string().email('Email non valida'),
-        customerPhone: z.string().min(1).max(13),
-        serviceName: BookingValidator.RoomTypeSchema,
-        quantity: z.number().int().positive('La quantità deve essere positiva'),
+    static readonly StatusSchema = z.enum(
+        ['pending', 'confirmed', 'cancelled', 'completed'],
+        {
+            message: 'StatusSchema not valid'
+        }
+    )
+
+    static readonly BaseSchema = z.object({
+        customerFirstName: z.string().min(1, 'customerFirstName is mandatory'),
+        customerLastName: z.string().min(1, 'customerLastName is mandatory'),
+        customerEmail: z.string().email('customerEmail not valid'),
+        customerPhone: z.string().min(1, 'customerPhone not valid').max(13, 'customerPhone not valid'),
+        serviceName: this.RoomTypeSchema,
+        quantity: z.number().int().positive('quantity not valid'),
         checkInDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-            message: 'Data di check-in non valida',
+            message: 'checkInDate not valid',
         }),
         checkOutDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-            message: 'Data di check-out non valida',
+            message: 'checkOutDate not valid',
         }),
-        paymentMethod: BookingValidator.PaymentMethodSchema,
+        paymentMethod: this.PaymentMethodSchema,
         notes: z.string().optional(),
-    };
+    });
+
+    static readonly UpdateSchema = this.BaseSchema.extend({
+        isPaid: z.boolean({
+            required_error: "Payment status (isPaid) is required.",
+            invalid_type_error: "Payment status (isPaid) must be a boolean value."
+        }),
+        status: this.StatusSchema,
+        createdAt: z.string().refine((date) => !isNaN(Date.parse(date)), {
+            message: "Invalid createdAt date format. Use ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ).",
+        }),
+        updatedAt: z.string().refine((date) => !isNaN(Date.parse(date)), {
+            message: "Invalid updatedAt date format. Use ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ).",
+        }),
+        servicePrice: z.number().positive("Service price must be a positive number."),
+        totalAmount: z.number().positive("Total amount must be a positive number."),
+    })
 
     static parseCreation(request: IBookingBase) {
-        const bookingCreationSchema = z.object(BookingValidator.BookingBaseSchema);
-        return bookingCreationSchema.parse(request);
+        return this.BaseSchema.parse(request);
     }
 
     static parseUpdate(request: IBookingDetails) {
-        // const bookingUpdateSchema = z.object({
-        //     ...BookingValidator.BookingBaseSchema,
-        //         isPaid: z;
-        //         status: BookingStatus;
-        //         createdAt: string;           // Data di creazione della prenotazione (ISO Date)
-        //         updatedAt: string;          // Data di ultimo aggiornamento (ISO Date)
-        //         servicePrice: number;
-        //         totalAmount: number;
-        // })
+        return this.UpdateSchema.parse(request);
     }
 }

@@ -4,10 +4,19 @@ import { dbFirestore } from "../firestore";
 export class BookingCollection {
     static readonly collection = dbFirestore.collection('bookings');
 
-    static async addItem(booking: IBookingBase): Promise<string> {
+    static async addItem(item: IBookingBase): Promise<string> {
         try {
-            const res = await BookingCollection.collection.add(booking);
+            const res = await BookingCollection.collection.add(item);
             return res.id;
+        } catch (e: any) {
+            throw new Error(`BookingCollection addItem error:'${e?.message}`)
+        }
+    }
+
+    static async updateItem(id: string, item: IBookingDetails): Promise<string> {
+        try {
+            await BookingCollection.collection.doc(id).update(item as { [key: string]: any });
+            return id;
         } catch (e: any) {
             throw new Error(`BookingCollection addItem error:'${e?.message}`)
         }
@@ -49,5 +58,7 @@ export class BookingCollection {
             throw new Error(`BookingCollection deleteItem error:'${e?.message}`)
         }
     }
+
+
 }
 

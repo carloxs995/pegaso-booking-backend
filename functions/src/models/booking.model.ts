@@ -1,32 +1,14 @@
-export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+import { z } from "zod";
+import { BookingValidator } from "../validators/BookingValidator";
 
-export type PaymentMethod = 'credit_card' | 'paypal' | 'cash';
+export type BookingStatus = z.infer<typeof BookingValidator.StatusSchema>;
 
-export type RoomType =
-| 'Standard'
-| 'Deluxe'
-| 'Suite'
-| 'Luxury'
-| 'Penthouse';
+export type PaymentMethod = z.infer<typeof BookingValidator.PaymentMethodSchema>;
 
-export interface IBookingBase {
-    customerName: string;
-    customerEmail: string;
-    customerPhone: string;
-    serviceName: RoomType;
-    quantity: number;            // Quantità prenotata (es: numero di notti o posti)
-    checkInDate: string;         // Data di inizio prenotazione (ISO Date)
-    checkOutDate: string;        // Data di fine prenotazione (ISO Date)
-    paymentMethod: PaymentMethod;
-    notes?: string;              // Note aggiuntive (opzionale)
-}
+export type RoomType = z.infer<typeof BookingValidator.RoomTypeSchema>
 
-export interface IBookingDetails extends IBookingBase {
+export type IBookingBase = z.infer<typeof BookingValidator.BaseSchema>
+
+export interface IBookingDetails extends z.infer<typeof BookingValidator.UpdateSchema> {
     id: string;
-    isPaid: boolean;
-    status: BookingStatus;
-    createdAt: string;           // Data di creazione della prenotazione (ISO Date)
-    updatedAt: string;          // Data di ultimo aggiornamento (ISO Date)
-    servicePrice: number;
-    totalAmount: number;
 }
