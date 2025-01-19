@@ -18,10 +18,8 @@ export interface IBookingBase {
     checkInDate: string;         // Data di inizio prenotazione (ISO Date)
     checkOutDate: string;        // Data di fine prenotazione (ISO Date)
     paymentMethod: PaymentMethod;
-    notes: string;              // Note aggiuntive (opzionale)
+    notes?: string;              // Note aggiuntive (opzionale)
 }
-
-type ciao = keyof IBookingBase;
 
 export interface IBookingDetails extends IBookingBase {
     id: string;

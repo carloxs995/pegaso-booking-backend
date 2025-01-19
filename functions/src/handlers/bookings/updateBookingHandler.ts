@@ -1,5 +1,5 @@
-import {dbFirestore} from '../..';
 import {Request, Response} from 'express';
+import { dbFirestore } from '../../database/firestore';
 
 /**
  * Update an existing booking in the database.
@@ -12,9 +12,8 @@ export async function updateBookingHandler(req: Request, res: Response): Promise
   const data = req.body;
   try {
     await dbFirestore.collection('bookings').doc(id).update(data);
-    res.status(200).json({message: 'Prenotazione aggiornata'});
+    res.status(204).json(null);
   } catch (error: any) {
-    console.error('Errore PUT /bookings/:id:', error);
-    res.status(500).json({error: error.message});
+    res.status(500).json({error: error?.message});
   }
 }
