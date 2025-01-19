@@ -13,11 +13,16 @@ export class RoomsCollection {
         }
     }
 
-    static async getItemPerType(type: IRoomType): Promise<IRoomDetails> {
+    static async getItemPerType(type: IRoomType): Promise<IRoomDetails | undefined> {
         try {
             const res = await this.collection
                 .where('type', '==', type)
                 .get();
+
+            if (!res.size) {
+                return undefined;
+            }
+
             return res.docs[0].data() as IRoomDetails;
         } catch (e: any) {
             throw new Error(`this. addItem error:'${e?.message}`)

@@ -41,6 +41,7 @@ export class RoomValidator {
             checkOutDate: booking.checkOutDate
         });
 
-            return !!(maxQuantity - bookingsSnapshot.totalCount);
+        //TODO: FIX IT, IT IS NOT WORKING
+        return !!(maxQuantity - bookingsSnapshot.totalCount);
     }
 }

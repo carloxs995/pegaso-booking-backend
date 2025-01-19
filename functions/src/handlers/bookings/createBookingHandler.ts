@@ -14,11 +14,15 @@ export async function createBookingHandler(req: Request, res: Response): Promise
     try {
         const data = BookingValidator.mapItemWithDefaultValue(
             BookingValidator.parseCreation(req.body)         //TODO: set servicePrice param: price according to roomType selected and guests selected
-
         );
+
+        console.log(data);
+
         if (!(await RoomValidator.isRoomAvailable(data))) {
             res.status(400).json({ message: 'No room available' });
+            return;
         }
+
         res.status(201).json({ id: await BookingCollection.addItem(data) });
     } catch (error: any) {
         if (error instanceof z.ZodError) {
