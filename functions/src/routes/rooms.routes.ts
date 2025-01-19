@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { checkAvailabilityRoomsHandler } from "../handlers/rooms/checkRoomsAvailabilityHandler";
+import { checkAvailabilityRoomHandler } from "../handlers/rooms/checkRoomAvailabilityHandler";
 
 export const roomsRouter = Router();
 
 //GET /rooms/check-availability
-roomsRouter.get('/check-availability', checkAvailabilityRoomsHandler)
+roomsRouter.get('/check-availability', checkAvailabilityRoomHandler)

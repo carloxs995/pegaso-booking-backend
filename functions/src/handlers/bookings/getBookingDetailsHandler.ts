@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { BookingCollection } from '../../database/collections/bookingCollection';
+import { BookingCollection } from '../../database/collections/bookingsCollection';
 
 /**
  * Get an existing booking by ID in the database.

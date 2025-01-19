@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { BookingCollection } from '../../database/collections/bookingCollection';
+import { BookingCollection } from '../../database/collections/bookingsCollection';
 
 /**
  * Delete an existing booking from the database.

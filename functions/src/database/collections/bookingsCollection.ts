@@ -1,5 +1,12 @@
 import { IBookingDetails } from "../../models/booking.model";
+import { IRoomType } from "../../models/room.model";
 import { dbFirestore } from "../firestore";
+
+export interface BookingFilters {
+    serviceType?: IRoomType;
+    checkInDate?: string;
+    checkOutDate?: string;
+}
 
 export class BookingCollection {
     static readonly collection = dbFirestore.collection('bookings');
@@ -30,15 +37,29 @@ export class BookingCollection {
         }
     }
 
-    static async getAllItems(): Promise<IBookingDetails[]> {
+    static async getAllItems(filters?: BookingFilters): Promise<{ items: IBookingDetails[], totalCount: number }> {
         try {
+            const queryBase = BookingCollection.collection;
+            if (filters?.serviceType) {
+                queryBase.where('serviceName', '==', filters.serviceType);
+            }
+            if (filters?.checkInDate) {
+                queryBase.where('checkInDate', '<', filters.checkOutDate);
+            }
+            if (filters?.serviceType) {
+                queryBase.where('checkOutDate', '>', filters.checkInDate);
+            }
+
             const data = await BookingCollection.collection.get();
-            const bookings: any = [];
+            const bookings: IBookingDetails[] = [];
             data.forEach((doc) => {
-                bookings.push({ id: doc.id, ...doc.data() });
+                bookings.push({ id: doc.id, ...doc.data() } as IBookingDetails);
             });
 
-            return bookings as IBookingDetails[];
+            return {
+                items: bookings,
+                totalCount: data.size
+            };
         } catch (e: any) {
             throw new Error(`BookingCollection getAllItems error:'${e?.message}`)
         }

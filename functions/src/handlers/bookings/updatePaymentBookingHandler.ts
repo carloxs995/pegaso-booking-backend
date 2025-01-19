@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BookingValidator } from '../../validators/BookingValidator';
 import { z } from 'zod';
-import { BookingCollection } from '../../database/collections/bookingCollection';
+import { BookingCollection } from '../../database/collections/bookingsCollection';
 
 /**
  * Confirm as Paid an existing booking in the database.

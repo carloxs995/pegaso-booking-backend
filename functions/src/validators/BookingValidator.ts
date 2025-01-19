@@ -1,18 +1,12 @@
 import { z } from 'zod';
 import { IBookingBase, IBookingDetails } from '../models/booking.model';
+import { RoomValidator } from './RoomValidator';
 
 export class BookingValidator {
     static readonly PaymentMethodSchema = z.enum(
         ['cash'],
         {
             message: 'PaymentMethodSchema not valid'
-        }
-    );
-
-    static readonly RoomTypeSchema = z.enum(
-        ['Standard', 'Deluxe', 'Suite', 'Luxury', 'Penthouse'],
-        {
-            message: 'RoomTypeSchema not valid'
         }
     );
 
@@ -28,7 +22,7 @@ export class BookingValidator {
         customerLastName: z.string().min(1, 'customerLastName is mandatory'),
         customerEmail: z.string().email('customerEmail not valid'),
         customerPhone: z.string().min(1, 'customerPhone not valid').max(13, 'customerPhone not valid'),
-        serviceName: this.RoomTypeSchema,
+        serviceName: RoomValidator.RoomTypeEnum,
         quantityGuests: z.number().int().positive('quantityGuests not valid'),
         checkInDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
             message: 'checkInDate not valid',
