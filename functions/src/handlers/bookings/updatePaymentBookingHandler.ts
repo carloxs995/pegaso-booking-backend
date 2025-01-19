@@ -4,16 +4,25 @@ import { z } from 'zod';
 import { BookingCollection } from '../../database/collections/bookingCollection';
 
 /**
- * Update an existing booking in the database.
+ * Confirm as Paid an existing booking in the database.
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
  * @return {Promise<void>} The response with the created booking ID.
  */
-export async function updateBookingHandler(req: Request, res: Response): Promise<void> {
+export async function updatePaymentBookingHandler(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
-        const data = BookingValidator.parseUpdate(req.body);
-        await BookingCollection.updateItem(id, data);
+        const item = await BookingCollection.getItemById(id);
+        if (!item) {
+            res.status(404).json({ message: 'Booking not found' });
+            return;
+        }
+
+        await BookingCollection.updateItem(id, {
+            isPaid: true,
+            status: BookingValidator.StatusSchema.enum.confirmed
+        });
+
         res.status(204).json(null);
     } catch (error: any) {
         if (error instanceof z.ZodError) {

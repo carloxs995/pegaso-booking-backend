@@ -9,6 +9,12 @@ export type RoomType = z.infer<typeof BookingValidator.RoomTypeSchema>
 
 export type IBookingBase = z.infer<typeof BookingValidator.BaseSchema>
 
-export interface IBookingDetails extends z.infer<typeof BookingValidator.UpdateSchema> {
-    id: string;
+export interface IBookingDetails extends IBookingBase {
+    id?: string;
+    isPaid: boolean,
+    status: BookingStatus,
+    servicePrice: number;
+    createdAt: string;
+    updatedAt: string;
+    paymentMethod: PaymentMethod;
 }

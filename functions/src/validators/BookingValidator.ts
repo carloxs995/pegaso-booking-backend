@@ -3,7 +3,7 @@ import { IBookingBase, IBookingDetails } from '../models/booking.model';
 
 export class BookingValidator {
     static readonly PaymentMethodSchema = z.enum(
-        ['credit_card', 'paypal', 'cash'],
+        ['cash'],
         {
             message: 'PaymentMethodSchema not valid'
         }
@@ -29,38 +29,44 @@ export class BookingValidator {
         customerEmail: z.string().email('customerEmail not valid'),
         customerPhone: z.string().min(1, 'customerPhone not valid').max(13, 'customerPhone not valid'),
         serviceName: this.RoomTypeSchema,
-        quantity: z.number().int().positive('quantity not valid'),
+        quantityGuests: z.number().int().positive('quantityGuests not valid'),
         checkInDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
             message: 'checkInDate not valid',
         }),
         checkOutDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
             message: 'checkOutDate not valid',
         }),
-        paymentMethod: this.PaymentMethodSchema,
         notes: z.string().optional(),
+        paymentMethod: this.PaymentMethodSchema.default(this.PaymentMethodSchema.Enum.cash).optional(), //only accepted Cash method
     });
 
-    static readonly UpdateSchema = this.BaseSchema.extend({
-        isPaid: z.boolean({
-            required_error: "Payment status (isPaid) is required.",
-            invalid_type_error: "Payment status (isPaid) must be a boolean value."
-        }),
-        status: this.StatusSchema,
-        createdAt: z.string().refine((date) => !isNaN(Date.parse(date)), {
-            message: "Invalid createdAt date format. Use ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ).",
-        }),
-        updatedAt: z.string().refine((date) => !isNaN(Date.parse(date)), {
-            message: "Invalid updatedAt date format. Use ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ).",
-        }),
-        servicePrice: z.number().positive("Service price must be a positive number."),
-        totalAmount: z.number().positive("Total amount must be a positive number."),
-    })
-
     static parseCreation(request: IBookingBase) {
-        return this.BaseSchema.parse(request);
+        return this.BaseSchema.strict().strip().parse(request);
     }
 
-    static parseUpdate(request: IBookingDetails) {
-        return this.UpdateSchema.parse(request);
+    static parseUpdate(request: IBookingBase) {
+        return this.BaseSchema
+        .pick({
+            customerFirstName: true,
+            customerLastName: true,
+            customerEmail: true,
+            customerPhone: true,
+            notes: true
+        })
+        .strict()
+        .strip()
+        .parse(request);
+    }
+
+    static mapItemWithDefaultValue(item: IBookingBase): IBookingDetails {
+        return {
+            ...item,
+            createdAt: new Date().toISOString(),
+            isPaid: false,
+            status: BookingValidator.StatusSchema.Enum.pending,
+            paymentMethod: BookingValidator.PaymentMethodSchema.Enum.cash,
+            updatedAt: new Date().toISOString(),
+            servicePrice: 0      //TODO: set servicePrice param: price according to roomType selected and guests selected
+        }
     }
 }

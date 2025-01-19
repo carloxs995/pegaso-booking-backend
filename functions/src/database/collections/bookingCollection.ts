@@ -1,10 +1,10 @@
-import { IBookingBase, IBookingDetails } from "../../models/booking.model";
+import { IBookingDetails } from "../../models/booking.model";
 import { dbFirestore } from "../firestore";
 
 export class BookingCollection {
     static readonly collection = dbFirestore.collection('bookings');
 
-    static async addItem(item: IBookingBase): Promise<string> {
+    static async addItem(item: IBookingDetails): Promise<string> {
         try {
             const res = await BookingCollection.collection.add(item);
             return res.id;
@@ -13,12 +13,12 @@ export class BookingCollection {
         }
     }
 
-    static async updateItem(id: string, item: IBookingDetails): Promise<string> {
+    static async updateItem(id: string, item: Partial<IBookingDetails>): Promise<string> {
         try {
             await BookingCollection.collection.doc(id).update(item as { [key: string]: any });
             return id;
         } catch (e: any) {
-            throw new Error(`BookingCollection addItem error:'${e?.message}`)
+            throw new Error(`BookingCollection updateItem error:'${e?.message}`)
         }
     }
 
@@ -40,7 +40,7 @@ export class BookingCollection {
 
             return bookings as IBookingDetails[];
         } catch (e: any) {
-            throw new Error(`BookingCollection getAll error:'${e?.message}`)
+            throw new Error(`BookingCollection getAllItems error:'${e?.message}`)
         }
     }
 
@@ -55,7 +55,7 @@ export class BookingCollection {
                 ...item.data()
             } as IBookingDetails;
         } catch (e: any) {
-            throw new Error(`BookingCollection deleteItem error:'${e?.message}`)
+            throw new Error(`BookingCollection getItemById error:'${e?.message}`)
         }
     }
 

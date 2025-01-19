@@ -10,9 +10,10 @@ import { BookingCollection } from '../../database/collections/bookingCollection'
 export async function getBookingDetailsHandler(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
-        const item = BookingCollection.getItemById(id);
+        const item = await BookingCollection.getItemById(id);
         if (!item) {
             res.status(404).json({ message: 'Booking not found' });
+            return;
         }
         res.status(200).json(item);
     } catch (error: any) {

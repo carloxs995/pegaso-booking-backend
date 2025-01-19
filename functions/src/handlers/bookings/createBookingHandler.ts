@@ -12,7 +12,8 @@ import { BookingCollection } from '../../database/collections/bookingCollection'
  */
 export async function createBookingHandler(req: Request<any, any, IBookingBase>, res: Response): Promise<void> {
     try {
-        const data = BookingValidator.parseCreation(req.body);
+        const data = BookingValidator.mapItemWithDefaultValue(BookingValidator.parseCreation(req.body));
+        //TODO: set servicePrice param: price according to roomType selected and guests selected
         res.status(201).json({ id: await BookingCollection.addItem(data) });
     } catch (error: any) {
         if (error instanceof z.ZodError) {
