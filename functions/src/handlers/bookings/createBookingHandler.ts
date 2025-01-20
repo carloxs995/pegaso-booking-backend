@@ -16,8 +16,6 @@ export async function createBookingHandler(req: Request, res: Response): Promise
             BookingValidator.parseCreation(req.body)         //TODO: set servicePrice param: price according to roomType selected and guests selected
         );
 
-        console.log(data);
-
         if (!(await RoomValidator.isRoomAvailable(data))) {
             res.status(400).json({ message: 'No room available' });
             return;

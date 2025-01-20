@@ -17,6 +17,7 @@ export class RoomValidator {
         name: z.string().min(1, "At least 5 chars must be provided"),
         description: z.string().max(500, 'Description cannot exceed 500 characters').optional(),
         capacity: z.number().int().positive("Capacity must be a positive integer"),
+        totalRooms: z.number().int().positive("totalRooms must be a positive integer"),
         pricePerNight: z.number().positive("Price per night must be a positive number"),
         amenities: z.array(z.string()).min(1, "At least one amenity must be provided"),
         available: z.boolean().optional().default(true),
@@ -27,21 +28,21 @@ export class RoomValidator {
         return this.BaseSchema.strict().strip().parse(request);
     }
 
-    static async isRoomAvailable(booking: IBookingBase): Promise<boolean> {
+    static async isRoomAvailable(booking: Pick<IBookingBase, 'checkInDate' | 'checkOutDate' | 'serviceName'>): Promise<boolean> {
         const roomDoc = await RoomsCollection.getItemPerType(booking.serviceName);
 
         if (!roomDoc) {
             return false;
         }
 
-        const maxQuantity = roomDoc.capacity;
+        const maxQuantity = roomDoc.totalRooms;
+
         const bookingsSnapshot = await BookingCollection.getAllItems({
             serviceType: booking.serviceName,
             checkInDate: booking.checkInDate,
             checkOutDate: booking.checkOutDate
         });
 
-        //TODO: FIX IT, IT IS NOT WORKING
         return !!(maxQuantity - bookingsSnapshot.totalCount);
     }
 }

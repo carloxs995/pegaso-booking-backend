@@ -13,7 +13,7 @@ export class BookingCollection {
 
     static async addItem(item: IBookingDetails): Promise<string> {
         try {
-            const res = await BookingCollection.collection.add(item);
+            const res = await this.collection.add(item);
             return res.id;
         } catch (e: any) {
             throw new Error(`BookingCollection addItem error:'${e?.message}`)
@@ -22,7 +22,7 @@ export class BookingCollection {
 
     static async updateItem(id: string, item: Partial<IBookingDetails>): Promise<string> {
         try {
-            await BookingCollection.collection.doc(id).update(item as { [key: string]: any });
+            await this.collection.doc(id).update(item as { [key: string]: any });
             return id;
         } catch (e: any) {
             throw new Error(`BookingCollection updateItem error:'${e?.message}`)
@@ -31,7 +31,7 @@ export class BookingCollection {
 
     static async deleteItem(id: string): Promise<void> {
         try {
-            await BookingCollection.collection.doc(id).delete();
+            await this.collection.doc(id).delete();
         } catch (e: any) {
             throw new Error(`BookingCollection deleteItem error:'${e?.message}`)
         }
@@ -39,18 +39,18 @@ export class BookingCollection {
 
     static async getAllItems(filters?: BookingFilters): Promise<{ items: IBookingDetails[], totalCount: number }> {
         try {
-            const queryBase = BookingCollection.collection;
+            const queryBase = this.collection;
             if (filters?.serviceType) {
                 queryBase.where('serviceName', '==', filters.serviceType);
             }
             if (filters?.checkInDate) {
                 queryBase.where('checkInDate', '<', filters.checkOutDate);
             }
-            if (filters?.serviceType) {
+            if (filters?.checkOutDate) {
                 queryBase.where('checkOutDate', '>', filters.checkInDate);
             }
 
-            const data = await BookingCollection.collection.get();
+            const data = await this.collection.get();
             const bookings: IBookingDetails[] = [];
             data.forEach((doc) => {
                 bookings.push({ id: doc.id, ...doc.data() } as IBookingDetails);
@@ -67,7 +67,7 @@ export class BookingCollection {
 
     static async getItemById(id: string): Promise<IBookingDetails | undefined> {
         try {
-            const item = await BookingCollection.collection.doc(id).get();
+            const item = await this.collection.doc(id).get();
             if (!item.exists) {
                 return undefined;
             }

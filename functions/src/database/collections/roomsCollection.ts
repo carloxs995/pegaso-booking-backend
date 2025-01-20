@@ -9,7 +9,7 @@ export class RoomsCollection {
             const res = await this.collection.add(item);
             return res.id;
         } catch (e: any) {
-            throw new Error(`this. addItem error:'${e?.message}`)
+            throw new Error(`RoomsCollection addItem error:'${e?.message}`)
         }
     }
 
@@ -19,13 +19,13 @@ export class RoomsCollection {
                 .where('type', '==', type)
                 .get();
 
-            if (!res.size) {
+            if (res.empty) {
                 return undefined;
             }
 
             return res.docs[0].data() as IRoomDetails;
         } catch (e: any) {
-            throw new Error(`this. addItem error:'${e?.message}`)
+            throw new Error(`RoomsCollection addItem error:'${e?.message}`)
         }
     }
 
@@ -34,7 +34,7 @@ export class RoomsCollection {
             await this.collection.doc(id).update(item as { [key: string]: any });
             return id;
         } catch (e: any) {
-            throw new Error(`this. updateItem error:'${e?.message}`)
+            throw new Error(`RoomsCollection updateItem error:'${e?.message}`)
         }
     }
 
@@ -42,7 +42,7 @@ export class RoomsCollection {
         try {
             await this.collection.doc(id).delete();
         } catch (e: any) {
-            throw new Error(`this. deleteItem error:'${e?.message}`)
+            throw new Error(`RoomsCollection deleteItem error:'${e?.message}`)
         }
     }
 
@@ -56,7 +56,7 @@ export class RoomsCollection {
 
             return bookings as IRoomDetails[];
         } catch (e: any) {
-            throw new Error(`this. getAllItems error:'${e?.message}`)
+            throw new Error(`RoomsCollection getAllItems error:'${e?.message}`)
         }
     }
 
@@ -71,7 +71,7 @@ export class RoomsCollection {
                 ...item.data()
             } as IRoomDetails;
         } catch (e: any) {
-            throw new Error(`this. getItemById error:'${e?.message}`)
+            throw new Error(`RoomsCollection getItemById error:'${e?.message}`)
         }
     }
 

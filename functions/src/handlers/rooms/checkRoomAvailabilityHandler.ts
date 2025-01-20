@@ -1,27 +1,14 @@
 import { Request, Response } from "express";
-import { RoomsCollection } from "../../database/collections/roomsCollection";
-import { BookingCollection } from "../../database/collections/bookingsCollection";
+import { RoomValidator } from "../../validators/RoomValidator";
 
 export async function checkAvailabilityRoomHandler(request: Request, response: Response): Promise<void> {
     const { serviceName, checkInDate, checkOutDate } = request.body;
 
     try {
-        const roomDoc = await RoomsCollection.getItemPerType(serviceName);
-
-        if (!roomDoc) {
-            response.status(404).json({ message: "Room not found" });
-            return;
-        }
-
-        const maxQuantity = roomDoc.capacity;
-        const bookingsSnapshot = await BookingCollection.getAllItems({
-            serviceType: serviceName,
-            checkInDate,
-            checkOutDate
-        });
-
-        if(maxQuantity - bookingsSnapshot.totalCount) {
+        const isAvailable = RoomValidator.isRoomAvailable({ serviceName, checkInDate, checkOutDate });
+        if (!isAvailable) {
             response.status(400).json({ message: 'No rooms available' });
+            return;
         }
 
         response.status(200).json({ message: 'success' });
