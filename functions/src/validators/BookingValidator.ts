@@ -59,7 +59,7 @@ export class BookingValidator {
     }
 
     async mapItemWithDefaultValue(item: IBookingBase): Promise<IBookingDetails> {
-        const RoomsService = container.resolve<RoomsService>(DITokens.roomsCollection);
+        const RoomsService = container.resolve<RoomsService>(DITokens.roomsService);
 
         return {
             ...item,
