@@ -7,6 +7,11 @@ export async function checkAvailabilityRoomHandler(request: Request, response: R
     const { serviceName, checkInDate, checkOutDate } = request.body;
 
     try {
+        if (serviceName || checkInDate || checkOutDate) {
+            response.status(400).json({message: 'some param is missing'})
+            return;
+        }
+
         const RoomService = container.resolve<RoomsService>(DITokens.roomsService);
         const roomAvailability = await RoomService.isRoomAvailable({ serviceName, checkInDate, checkOutDate });
         response.status(200).json({ data: roomAvailability });

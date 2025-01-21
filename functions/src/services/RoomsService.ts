@@ -65,6 +65,7 @@ export class RoomsService {
 
         // Prezzo finale
         const totalPrice = basePrice + extraGuestCharge;
-        return totalPrice;
+        const priceFixed = Math.round(totalPrice * 100) / 100;
+        return priceFixed;
     }
 }
