@@ -1,9 +1,8 @@
 import { z } from 'zod';
-import { IBookingBase } from '../models/booking.model';
-import { RoomsCollection } from '../database/collections/roomsCollection';
-import { BookingCollection } from '../database/collections/bookingsCollection';
 import { IRoomBase } from '../models/room.model';
+import { injectable } from 'tsyringe';
 
+@injectable()
 export class RoomValidator {
     static readonly RoomTypeEnum = z.enum( //TODO: pensare se dare la possibilità di creare più stanze custom
         ['Standard', 'Deluxe', 'Suite', 'Luxury', 'Penthouse'],
@@ -13,7 +12,7 @@ export class RoomValidator {
     );
 
     static readonly BaseSchema = z.object({
-        type: this.RoomTypeEnum,
+        type: RoomValidator.RoomTypeEnum,
         name: z.string().min(1, "At least 5 chars must be provided"),
         description: z.string().max(500, 'Description cannot exceed 500 characters').optional(),
         capacity: z.number().int().positive("Capacity must be a positive integer"),
@@ -24,25 +23,7 @@ export class RoomValidator {
         images: z.array(z.instanceof(Blob)).optional(), // Validazione per Blob array
     });
 
-    static parseCreation(request: IRoomBase) {
-        return this.BaseSchema.strict().strip().parse(request);
-    }
-
-    static async isRoomAvailable(booking: Pick<IBookingBase, 'checkInDate' | 'checkOutDate' | 'serviceName'>): Promise<boolean> {
-        const roomDoc = await RoomsCollection.getItemPerType(booking.serviceName);
-
-        if (!roomDoc) {
-            return false;
-        }
-
-        const maxQuantity = roomDoc.totalRooms;
-
-        const bookingsSnapshot = await BookingCollection.getAllItems({
-            serviceType: booking.serviceName,
-            checkInDate: booking.checkInDate,
-            checkOutDate: booking.checkOutDate
-        });
-
-        return !!(maxQuantity - bookingsSnapshot.totalCount);
+    parseCreation(request: IRoomBase) {
+        return RoomValidator.BaseSchema.strict().strip().parse(request);
     }
 }

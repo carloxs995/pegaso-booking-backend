@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
-import { BookingCollection } from '../../database/collections/bookingsCollection';
+import { BookingsCollection } from '../../database/collections/BookingsCollection';
+import { container } from 'tsyringe';
+import { DITokens } from '../../di-container';
 
 /**
  * Get an existing booking by ID in the database.
@@ -10,7 +12,8 @@ import { BookingCollection } from '../../database/collections/bookingsCollection
 export async function getBookingDetailsHandler(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
-        const item = await BookingCollection.getItemById(id);
+        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingCollection);
+        const item = await BookingsCollection.getItemById(id);
         if (!item) {
             res.status(404).json({ message: 'Booking not found' });
             return;

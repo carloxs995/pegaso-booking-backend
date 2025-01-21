@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import { RoomValidator } from '../../validators/RoomValidator';
-import { RoomsCollection } from '../../database/collections/roomsCollection';
+import { RoomsCollection } from '../../database/collections/RoomsCollection';
+import { container } from 'tsyringe';
+import { DITokens } from '../../di-container';
 
 /**
  * Create a new room in the database.
@@ -11,10 +13,12 @@ import { RoomsCollection } from '../../database/collections/roomsCollection';
  */
 export async function createRoomHandler(req: Request, res: Response): Promise<void> {
     try {
+        const RoomValidator = container.resolve<RoomValidator>(DITokens.roomValidator);
+        const RoomsCollection = container.resolve<RoomsCollection>(DITokens.roomsCollection);
         const data = RoomValidator.parseCreation(req.body);
 
         //Non è possibile creare più stanze dello stesso tipo
-        if (await RoomsCollection.getItemPerType(data.type)) {
+        if (await RoomsCollection.getItemByType(data.type)) {
             res.status(400).json({
                 message: `Room ${data.type} is already created`
             });

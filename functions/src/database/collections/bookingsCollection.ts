@@ -1,3 +1,4 @@
+import { injectable } from "tsyringe";
 import { IBookingDetails } from "../../models/booking.model";
 import { IRoomType } from "../../models/room.model";
 import { dbFirestore } from "../firestore";
@@ -8,10 +9,11 @@ export interface BookingFilters {
     checkOutDate?: string;
 }
 
-export class BookingCollection {
-    static readonly collection = dbFirestore.collection('bookings');
+@injectable()
+export class BookingsCollection {
+    readonly collection = dbFirestore.collection('bookings');
 
-    static async addItem(item: IBookingDetails): Promise<string> {
+    async addItem(item: IBookingDetails): Promise<string> {
         try {
             const res = await this.collection.add(item);
             return res.id;
@@ -20,7 +22,7 @@ export class BookingCollection {
         }
     }
 
-    static async updateItem(id: string, item: Partial<IBookingDetails>): Promise<string> {
+    async updateItem(id: string, item: Partial<IBookingDetails>): Promise<string> {
         try {
             await this.collection.doc(id).update(item as { [key: string]: any });
             return id;
@@ -29,7 +31,7 @@ export class BookingCollection {
         }
     }
 
-    static async deleteItem(id: string): Promise<void> {
+    async deleteItem(id: string): Promise<void> {
         try {
             await this.collection.doc(id).delete();
         } catch (e: any) {
@@ -37,7 +39,7 @@ export class BookingCollection {
         }
     }
 
-    static async getAllItems(filters?: BookingFilters): Promise<{ items: IBookingDetails[], totalCount: number }> {
+    async getAllItems(filters?: BookingFilters): Promise<{ items: IBookingDetails[], totalCount: number }> {
         try {
             const queryBase = this.collection;
             if (filters?.serviceType) {
@@ -65,7 +67,7 @@ export class BookingCollection {
         }
     }
 
-    static async getItemById(id: string): Promise<IBookingDetails | undefined> {
+    async getItemById(id: string): Promise<IBookingDetails | undefined> {
         try {
             const item = await this.collection.doc(id).get();
             if (!item.exists) {

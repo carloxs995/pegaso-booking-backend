@@ -1,7 +1,11 @@
 import { z } from 'zod';
 import { IBookingBase, IBookingDetails } from '../models/booking.model';
 import { RoomValidator } from './RoomValidator';
+import { container, injectable } from 'tsyringe';
+import { RoomsService } from '../services/RoomsService';
+import { DITokens } from '../di-container';
 
+@injectable()
 export class BookingValidator {
     static readonly PaymentMethodSchema = z.enum(
         ['cash'],
@@ -31,28 +35,30 @@ export class BookingValidator {
             message: 'checkOutDate not valid',
         }),
         notes: z.string().optional(),
-        paymentMethod: this.PaymentMethodSchema.default(this.PaymentMethodSchema.Enum.cash).optional(), //only accepted Cash method
+        paymentMethod: BookingValidator.PaymentMethodSchema.default(BookingValidator.PaymentMethodSchema.Enum.cash).optional(), //only accepted Cash method
     });
 
-    static parseCreation(request: IBookingBase) {
-        return this.BaseSchema.strict().strip().parse(request);
+    parseCreation(request: IBookingBase) {
+        return BookingValidator.BaseSchema.strict().strip().parse(request);
     }
 
-    static parseUpdate(request: IBookingBase) {
-        return this.BaseSchema
-        .pick({
-            customerFirstName: true,
-            customerLastName: true,
-            customerEmail: true,
-            customerPhone: true,
-            notes: true
-        })
-        .strict()
-        .strip()
-        .parse(request);
+    parseUpdate(request: IBookingBase) {
+        return BookingValidator.BaseSchema
+            .pick({
+                customerFirstName: true,
+                customerLastName: true,
+                customerEmail: true,
+                customerPhone: true,
+                notes: true
+            })
+            .strict()
+            .strip()
+            .parse(request);
     }
 
-    static mapItemWithDefaultValue(item: IBookingBase): IBookingDetails {
+    async mapItemWithDefaultValue(item: IBookingBase): Promise<IBookingDetails> {
+        const RoomsService = container.resolve<RoomsService>(DITokens.roomsCollection);
+
         return {
             ...item,
             createdAt: new Date().toISOString(),
@@ -60,7 +66,7 @@ export class BookingValidator {
             status: BookingValidator.StatusSchema.Enum.pending,
             paymentMethod: BookingValidator.PaymentMethodSchema.Enum.cash,
             updatedAt: new Date().toISOString(),
-            servicePrice: 0      //TODO: set servicePrice param: price according to roomType selected and guests selected
+            servicePrice: await RoomsService.calculateRoomPrice(item.serviceName, item.checkInDate, item.checkOutDate, item.quantityGuests)
         }
     }
 }

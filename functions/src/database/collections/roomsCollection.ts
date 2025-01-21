@@ -1,10 +1,12 @@
+import { injectable } from "tsyringe";
 import { IRoomBase, IRoomDetails, IRoomType } from "../../models/room.model";
 import { dbFirestore } from "../firestore";
 
+@injectable()
 export class RoomsCollection {
-    static readonly collection = dbFirestore.collection('rooms');
+    readonly collection = dbFirestore.collection('rooms');
 
-    static async addItem(item: IRoomBase): Promise<string> {
+    async addItem(item: IRoomBase): Promise<string> {
         try {
             const res = await this.collection.add(item);
             return res.id;
@@ -13,7 +15,7 @@ export class RoomsCollection {
         }
     }
 
-    static async getItemPerType(type: IRoomType): Promise<IRoomDetails | undefined> {
+    async getItemByType(type: IRoomType): Promise<IRoomDetails | undefined> {
         try {
             const res = await this.collection
                 .where('type', '==', type)
@@ -29,7 +31,7 @@ export class RoomsCollection {
         }
     }
 
-    static async updateItem(id: string, item: Partial<IRoomBase>): Promise<string> {
+    async updateItem(id: string, item: Partial<IRoomBase>): Promise<string> {
         try {
             await this.collection.doc(id).update(item as { [key: string]: any });
             return id;
@@ -38,7 +40,7 @@ export class RoomsCollection {
         }
     }
 
-    static async deleteItem(id: string): Promise<void> {
+    async deleteItem(id: string): Promise<void> {
         try {
             await this.collection.doc(id).delete();
         } catch (e: any) {
@@ -46,7 +48,7 @@ export class RoomsCollection {
         }
     }
 
-    static async getAllItems(): Promise<IRoomDetails[]> {
+    async getAllItems(): Promise<IRoomDetails[]> {
         try {
             const data = await this.collection.get();
             const bookings: any = [];
@@ -60,7 +62,7 @@ export class RoomsCollection {
         }
     }
 
-    static async getItemById(id: string): Promise<IRoomDetails | undefined> {
+    async getItemById(id: string): Promise<IRoomDetails | undefined> {
         try {
             const item = await this.collection.doc(id).get();
             if (!item.exists) {
@@ -74,7 +76,5 @@ export class RoomsCollection {
             throw new Error(`RoomsCollection getItemById error:'${e?.message}`)
         }
     }
-
-
 }
 

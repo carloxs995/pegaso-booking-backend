@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { BookingValidator } from '../../validators/BookingValidator';
 import { z } from 'zod';
-import { BookingCollection } from '../../database/collections/bookingsCollection';
+import { BookingsCollection } from '../../database/collections/BookingsCollection';
+import { container } from 'tsyringe';
+import { DITokens } from '../../di-container';
 
 /**
  * Update an existing booking in the database.
@@ -12,8 +14,10 @@ import { BookingCollection } from '../../database/collections/bookingsCollection
 export async function updateBookingHandler(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
+        const BookingValidator = container.resolve<BookingValidator>(DITokens.bookingValidator);
+        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingCollection);
         const data = BookingValidator.parseUpdate(req.body);
-        await BookingCollection.updateItem(id, data);
+        await BookingsCollection.updateItem(id, data);
         res.status(204).json(null);
     } catch (error: any) {
         if (error instanceof z.ZodError) {

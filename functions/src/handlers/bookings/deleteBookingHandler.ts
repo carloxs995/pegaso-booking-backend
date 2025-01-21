@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
-import { BookingCollection } from '../../database/collections/bookingsCollection';
+import { BookingsCollection } from '../../database/collections/BookingsCollection';
+import { DITokens } from '../../di-container';
+import { container } from 'tsyringe';
 
 /**
  * Delete an existing booking from the database.
@@ -10,7 +12,8 @@ import { BookingCollection } from '../../database/collections/bookingsCollection
 export async function deleteBookingHandler(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
-        await BookingCollection.deleteItem(id);
+        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingCollection);
+        await BookingsCollection.deleteItem(id);
         res.status(204).json(null);
     } catch (error: any) {
         res.status(500).json({ error: error.message });

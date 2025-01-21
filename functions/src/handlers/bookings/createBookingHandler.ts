@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import { BookingValidator } from '../../validators/BookingValidator';
-import { BookingCollection } from '../../database/collections/bookingsCollection';
-import { RoomValidator } from '../../validators/RoomValidator';
+import { BookingsCollection } from '../../database/collections/BookingsCollection';
+import { DITokens } from '../../di-container';
+import { container } from 'tsyringe';
+import { RoomsService } from '../../services/RoomsService';
 
 /**
  * Create a new booking in the database.
@@ -12,16 +14,20 @@ import { RoomValidator } from '../../validators/RoomValidator';
  */
 export async function createBookingHandler(req: Request, res: Response): Promise<void> {
     try {
-        const data = BookingValidator.mapItemWithDefaultValue(
-            BookingValidator.parseCreation(req.body)         //TODO: set servicePrice param: price according to roomType selected and guests selected
+        const BookingValidator = container.resolve<BookingValidator>(DITokens.bookingValidator);
+        const RoomService = container.resolve<RoomsService>(DITokens.roomsService);
+        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingCollection);
+
+        const data = await BookingValidator.mapItemWithDefaultValue(
+            BookingValidator.parseCreation(req.body)
         );
 
-        if (!(await RoomValidator.isRoomAvailable(data))) {
+        if (!(await RoomService.isRoomAvailable(data)).isAvailable) {
             res.status(400).json({ message: 'No room available' });
             return;
         }
 
-        res.status(201).json({ id: await BookingCollection.addItem(data) });
+        res.status(201).json({ id: await BookingsCollection.addItem(data) });
     } catch (error: any) {
         if (error instanceof z.ZodError) {
             res.status(400).json({
