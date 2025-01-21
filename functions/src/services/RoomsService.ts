@@ -10,7 +10,7 @@ import { DITokens } from '../di-tokens';
 @injectable()
 export class RoomsService {
     constructor(
-        @inject(DITokens.bookingCollection) private readonly _bookingsCollection: BookingsCollection,
+        @inject(DITokens.bookingsCollection) private readonly _bookingsCollection: BookingsCollection,
         @inject(DITokens.roomsCollection) private readonly _roomsCollection: RoomsCollection
     ) { }
 

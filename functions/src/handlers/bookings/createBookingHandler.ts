@@ -16,7 +16,7 @@ export async function createBookingHandler(req: Request, res: Response): Promise
     try {
         const BookingValidator = container.resolve<BookingValidator>(DITokens.bookingValidator);
         const RoomService = container.resolve<RoomsService>(DITokens.roomsService);
-        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingCollection);
+        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
 
         const data = await BookingValidator.mapItemWithDefaultValue(
             BookingValidator.parseCreation(req.body)

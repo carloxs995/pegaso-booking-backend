@@ -11,7 +11,7 @@ import { DITokens } from '../../di-tokens';
  */
 export async function getAllBookingsHandler(req: Request, res: Response): Promise<void> {
     try {
-        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingCollection);
+        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
         const bookings = await BookingsCollection.getAllItems();
         res.status(200).json(bookings);
     } catch (error: any) {

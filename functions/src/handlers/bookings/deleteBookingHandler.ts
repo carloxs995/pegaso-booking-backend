@@ -12,7 +12,7 @@ import { DITokens } from '../../di-tokens';
 export async function deleteBookingHandler(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
-        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingCollection);
+        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
         await BookingsCollection.deleteItem(id);
         res.status(204).json(null);
     } catch (error: any) {

@@ -15,7 +15,7 @@ export async function updateBookingHandler(req: Request, res: Response): Promise
     const { id } = req.params;
     try {
         const BookingValidator = container.resolve<BookingValidator>(DITokens.bookingValidator);
-        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingCollection);
+        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
         const data = BookingValidator.parseUpdate(req.body);
         await BookingsCollection.updateItem(id, data);
         res.status(204).json(null);

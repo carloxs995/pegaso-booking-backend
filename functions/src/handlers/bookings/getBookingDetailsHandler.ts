@@ -12,7 +12,7 @@ import { DITokens } from '../../di-tokens';
 export async function getBookingDetailsHandler(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
-        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingCollection);
+        const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
         const item = await BookingsCollection.getItemById(id);
         if (!item) {
             res.status(404).json({ message: 'Booking not found' });

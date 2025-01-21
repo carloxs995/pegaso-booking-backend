@@ -20,13 +20,13 @@ container.register(
 );
 
 container.register(
-    DITokens.bookingCollection,
+    DITokens.bookingsCollection,
     { useFactory: instanceCachingFactory(() => new BookingsCollection()) }
 );
 
 container.register(
     DITokens.roomsCollection,
-    { useValue: instanceCachingFactory(() => new RoomsCollection()) }
+    { useFactory: instanceCachingFactory(() => new RoomsCollection()) }
 );
 
 container.register(
@@ -34,7 +34,7 @@ container.register(
     {
         useFactory: instanceCachingFactory(
             c => new RoomsService(
-                c.resolve(DITokens.bookingCollection),
+                c.resolve(DITokens.bookingsCollection),
                 c.resolve(DITokens.roomsCollection)
             )
         )
