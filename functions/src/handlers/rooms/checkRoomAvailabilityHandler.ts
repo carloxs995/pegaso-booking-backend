@@ -7,7 +7,7 @@ export async function checkAvailabilityRoomHandler(request: Request, response: R
     const { serviceName, checkInDate, checkOutDate } = request.body;
 
     try {
-        if (serviceName || checkInDate || checkOutDate) {
+        if (!serviceName || !checkInDate || !checkOutDate) {
             response.status(400).json({message: 'some param is missing'})
             return;
         }
