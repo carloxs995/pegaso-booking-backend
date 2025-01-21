@@ -2,6 +2,7 @@ import { Router } from "express";
 import { checkAvailabilityRoomHandler } from "../handlers/rooms/checkRoomAvailabilityHandler";
 import { createRoomHandler } from "../handlers/rooms/createRoomHandler";
 import { getRoomDetailsHandler } from "../handlers/rooms/getRoomDetailsHandler";
+import { getAllRoomsHandler } from "../handlers/rooms/getAllRoomsHandler";
 
 export const roomsRouter = Router();
 
@@ -15,4 +16,4 @@ roomsRouter.get('/details', getRoomDetailsHandler)
 roomsRouter.post('/', createRoomHandler);
 
 // GET /bookings
-roomsRouter.get('/', getRoomDetailsHandler);
+roomsRouter.get('/', getAllRoomsHandler);
