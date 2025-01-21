@@ -2,13 +2,18 @@ import { Request, Response } from "express";
 import { RoomsService } from "../../services/RoomsService";
 import { container } from "tsyringe";
 import { DITokens } from "../../di-tokens";
+import { IRoomType } from "../../models/room.model";
 
 export async function checkAvailabilityRoomHandler(request: Request, response: Response): Promise<void> {
-    const { serviceName, checkInDate, checkOutDate } = request.body;
+    const { serviceName, checkInDate, checkOutDate } = request.query as {
+        serviceName: IRoomType;
+        checkInDate: string;
+        checkOutDate: string;
+    };
 
     try {
         if (!serviceName || !checkInDate || !checkOutDate) {
-            response.status(400).json({message: 'some param is missing'})
+            response.status(400).json({ message: 'some param is missing' })
             return;
         }
 

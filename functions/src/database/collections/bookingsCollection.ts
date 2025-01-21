@@ -43,18 +43,18 @@ export class BookingsCollection {
 
     async getAllItems(filters?: BookingFilters): Promise<{ items: IBookingDetails[], totalCount: number }> {
         try {
-            const queryBase = this.collection;
+            let queryBase: FirebaseFirestore.Query = this.collection;
             if (filters?.serviceType) {
-                queryBase.where('serviceName', '==', filters.serviceType);
+                queryBase = queryBase.where('serviceName', '==', filters.serviceType);
             }
             if (filters?.checkInDate) {
-                queryBase.where('checkInDate', '<', filters.checkOutDate);
+                queryBase = queryBase.where('checkInDate', '<', filters.checkOutDate);
             }
             if (filters?.checkOutDate) {
-                queryBase.where('checkOutDate', '>', filters.checkInDate);
+                queryBase = queryBase.where('checkOutDate', '>', filters.checkInDate);
             }
 
-            const data = await this.collection.get();
+            const data = await queryBase.get();
             const bookings: IBookingDetails[] = [];
             data.forEach((doc) => {
                 bookings.push({ id: doc.id, ...doc.data() } as IBookingDetails);
