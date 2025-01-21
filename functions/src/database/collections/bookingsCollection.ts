@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { injectable } from "tsyringe";
 import { IBookingDetails } from "../../models/booking.model";
 import { IRoomType } from "../../models/room.model";

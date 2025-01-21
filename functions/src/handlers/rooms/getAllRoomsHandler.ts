@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { DITokens } from '../../di-container';
 import { RoomsCollection } from '../../database/collections/RoomsCollection';
+import { DITokens } from '../../di-tokens';
 
 /**
  * Get all rooms from the database.
@@ -9,7 +9,7 @@ import { RoomsCollection } from '../../database/collections/RoomsCollection';
  * @param {Response} res - The response object.
  * @return {Promise<void>} The response with the list of rooms.
  */
-export async function getAllBookingsHandler(req: Request, res: Response): Promise<void> {
+export async function getAllRoomsHandler(req: Request, res: Response): Promise<void> {
     try {
         const RoomsCollection = container.resolve<RoomsCollection>(DITokens.roomsCollection);
         const rooms = await RoomsCollection.getAllItems();

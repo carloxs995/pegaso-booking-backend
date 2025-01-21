@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { injectable } from "tsyringe";
 import { IRoomBase, IRoomDetails, IRoomType } from "../../models/room.model";
 import { dbFirestore } from "../firestore";

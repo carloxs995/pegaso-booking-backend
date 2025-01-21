@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { RoomValidator } from '../../validators/RoomValidator';
 import { RoomsCollection } from '../../database/collections/RoomsCollection';
 import { container } from 'tsyringe';
-import { DITokens } from '../../di-container';
+import { DITokens } from '../../di-tokens';
 
 /**
  * Create a new room in the database.

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BookingsCollection } from '../../database/collections/BookingsCollection';
 import { container } from 'tsyringe';
-import { DITokens } from '../../di-container';
+import { DITokens } from '../../di-tokens';
 
 /**
  * Get an existing booking by ID in the database.

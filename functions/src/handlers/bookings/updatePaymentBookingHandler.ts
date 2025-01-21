@@ -3,7 +3,7 @@ import { BookingValidator } from '../../validators/BookingValidator';
 import { z } from 'zod';
 import { BookingsCollection } from '../../database/collections/BookingsCollection';
 import { container } from 'tsyringe';
-import { DITokens } from '../../di-container';
+import { DITokens } from '../../di-tokens';
 
 /**
  * Confirm as Paid an existing booking in the database.

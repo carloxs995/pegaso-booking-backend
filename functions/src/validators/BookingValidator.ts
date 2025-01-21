@@ -1,9 +1,11 @@
+import 'reflect-metadata';
+
 import { z } from 'zod';
 import { IBookingBase, IBookingDetails } from '../models/booking.model';
 import { RoomValidator } from './RoomValidator';
 import { container, injectable } from 'tsyringe';
 import { RoomsService } from '../services/RoomsService';
-import { DITokens } from '../di-container';
+import { DITokens } from '../di-tokens';
 
 @injectable()
 export class BookingValidator {

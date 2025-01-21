@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BookingsCollection } from '../../database/collections/BookingsCollection';
-import { DITokens } from '../../di-container';
 import { container } from 'tsyringe';
+import { DITokens } from '../../di-tokens';
 
 /**
  * Delete an existing booking from the database.

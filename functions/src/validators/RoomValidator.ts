@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { z } from 'zod';
 import { IRoomBase } from '../models/room.model';
 import { injectable } from 'tsyringe';

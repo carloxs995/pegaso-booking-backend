@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import { BookingValidator } from '../../validators/BookingValidator';
 import { BookingsCollection } from '../../database/collections/BookingsCollection';
-import { DITokens } from '../../di-container';
 import { container } from 'tsyringe';
 import { RoomsService } from '../../services/RoomsService';
+import { DITokens } from '../../di-tokens';
 
 /**
  * Create a new booking in the database.

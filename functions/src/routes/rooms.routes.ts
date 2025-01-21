@@ -13,3 +13,6 @@ roomsRouter.get('/details', getRoomDetailsHandler)
 
 // POST /bookings
 roomsRouter.post('/', createRoomHandler);
+
+// GET /bookings
+roomsRouter.post('/', getRoomDetailsHandler);

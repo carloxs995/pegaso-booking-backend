@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { DITokens } from '../../di-container';
 import { BookingsCollection } from '../../database/collections/BookingsCollection';
+import { DITokens } from '../../di-tokens';
 
 /**
  * Get all bookings from the database.

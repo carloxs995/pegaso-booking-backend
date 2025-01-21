@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { DITokens } from '../../di-container';
 import { RoomsCollection } from '../../database/collections/RoomsCollection';
 import { IRoomType } from '../../models/room.model';
+import { DITokens } from '../../di-tokens';
 
 /**
  * Get a room by tiem in the database.
@@ -14,11 +14,11 @@ export async function getRoomDetailsHandler(req: Request, res: Response): Promis
     const { type } = req.query;
 
     if (!type) {
-        res.status(400).json({ message: `Room ${type} param is required` });
+        res.status(400).json({ message: `type param is required` });
     }
 
     try {
-        const RoomsCollection = container.resolve<RoomsCollection>(DITokens.bookingCollection);
+        const RoomsCollection = container.resolve<RoomsCollection>(DITokens.roomsCollection);
         const item = await RoomsCollection.getItemByType(type as IRoomType);
         if (!item) {
             res.status(404).json({ message: `Room ${type} not found` });

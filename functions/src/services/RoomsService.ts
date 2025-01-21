@@ -1,23 +1,18 @@
+import 'reflect-metadata';
+
 import { inject, injectable } from "tsyringe";
 import { IBookingBase } from "../models/booking.model";
 import { IRoomType } from "../models/room.model";
-import { DITokens } from "../di-container";
 import { BookingsCollection } from "../database/collections/BookingsCollection";
 import { RoomsCollection } from "../database/collections/RoomsCollection";
-import { parseISO, differenceInDays } from "date-fns";
+import { DITokens } from '../di-tokens';
 
 @injectable()
 export class RoomsService {
-    private readonly _bookingsCollection: BookingsCollection;
-    private readonly _roomsCollection: RoomsCollection;
-
     constructor(
-        @inject(DITokens.bookingCollection) bookingsCollection: BookingsCollection,
-        @inject(DITokens.roomsCollection) roomsCollection: RoomsCollection
-    ) {
-        this._bookingsCollection = bookingsCollection;
-        this._roomsCollection = roomsCollection;
-    }
+        @inject(DITokens.bookingCollection) private readonly _bookingsCollection: BookingsCollection,
+        @inject(DITokens.roomsCollection) private readonly _roomsCollection: RoomsCollection
+    ) { }
 
     async isRoomAvailable(
         booking: Pick<IBookingBase, 'checkInDate' | 'checkOutDate' | 'serviceName'>
@@ -51,10 +46,14 @@ export class RoomsService {
             throw new Error(`Room type not found: ${roomType}`);
         }
 
-        const checkIn = parseISO(checkInDate);
-        const checkOut = parseISO(checkOutDate);
+        // Convert ISO string to Date object
+        const checkIn = new Date(checkInDate);
+        const checkOut = new Date(checkOutDate);
 
-        const nights = differenceInDays(checkOut, checkIn);
+        // Calculate the number of nights (difference in milliseconds)
+        const timeDifference = checkOut.getTime() - checkIn.getTime();
+        const nights = timeDifference / (1000 * 60 * 60 * 24);
+
         if (nights <= 0) {
             throw new Error("checkInDate and checkOutDate date is not valid");
         }
