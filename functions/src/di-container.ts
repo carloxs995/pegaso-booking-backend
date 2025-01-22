@@ -23,7 +23,11 @@ container.register(
 
 container.register(
     DITokens.bookingsCollection,
-    { useFactory: instanceCachingFactory(() => new BookingsCollection()) }
+    {
+        useFactory: instanceCachingFactory(
+            c => new BookingsCollection(c.resolve(DITokens.userService))
+        )
+    }
 );
 
 container.register(

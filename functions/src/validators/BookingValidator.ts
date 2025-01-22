@@ -6,7 +6,6 @@ import { RoomValidator } from './RoomValidator';
 import { container, injectable } from 'tsyringe';
 import { RoomsService } from '../services/RoomsService';
 import { DITokens } from '../di-tokens';
-import { UsersService } from '../services/UsersService';
 
 @injectable()
 export class BookingValidator {

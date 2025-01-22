@@ -8,7 +8,6 @@ import { UserRole } from "../models/user.model";
 
 const roomsRouter = Router();
 
-//TODO: Add Guard
 //GET /rooms/check-availability
 roomsRouter.get(
     '/check-availability',
