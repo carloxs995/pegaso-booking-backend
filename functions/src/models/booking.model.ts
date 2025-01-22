@@ -15,4 +15,5 @@ export interface IBookingDetails extends IBookingBase {
     createdAt: string;
     updatedAt: string;
     paymentMethod: PaymentMethod;
+    createdBy: string;
 }

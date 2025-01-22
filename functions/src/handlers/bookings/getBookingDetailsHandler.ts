@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { BookingsCollection } from '../../database/collections/BookingsCollection';
 import { container } from 'tsyringe';
 import { DITokens } from '../../di-tokens';
+import { UsersService } from '../../services/UsersService';
 
 /**
  * Get an existing booking by ID in the database.
@@ -13,8 +14,10 @@ export async function getBookingDetailsHandler(req: Request, res: Response): Pro
     const { id } = req.params;
     try {
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
-        //TODO: add check if booking is related to UserId
-        const item = await BookingsCollection.getItemById(id);
+        const UserService = container.resolve<UsersService>(DITokens.userService);
+
+        const item = await BookingsCollection.getItemById(id, UserService.getUserUIDdByHeader(req));
+
         if (!item) {
             res.status(404).json({ message: 'Booking not found' });
             return;

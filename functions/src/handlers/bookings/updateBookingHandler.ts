@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { BookingsCollection } from '../../database/collections/BookingsCollection';
 import { container } from 'tsyringe';
 import { DITokens } from '../../di-tokens';
+import { UsersService } from '../../services/UsersService';
 
 /**
  * Update an existing booking in the database.
@@ -16,10 +17,9 @@ export async function updateBookingHandler(req: Request, res: Response): Promise
     try {
         const BookingValidator = container.resolve<BookingValidator>(DITokens.bookingValidator);
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
-
-        //TODO: add check if booking is related to UserId
+        const UserService = container.resolve<UsersService>(DITokens.userService);
         const data = BookingValidator.parseUpdate(req.body);
-        await BookingsCollection.updateItem(id, data);
+        await BookingsCollection.updateItem(id, data, UserService.getUserUIDdByHeader(req));
         res.status(204).json(null);
     } catch (error: any) {
         if (error instanceof z.ZodError) {

@@ -10,10 +10,18 @@ const roomsRouter = Router();
 
 //TODO: Add Guard
 //GET /rooms/check-availability
-roomsRouter.get('/check-availability', checkAvailabilityRoomHandler)
+roomsRouter.get(
+    '/check-availability',
+    (...args) => authenticateFirebaseToken(...args, UserRole.USER),
+    checkAvailabilityRoomHandler
+);
 
 //GET /details?type={TYPE}
-roomsRouter.get('/details', getRoomDetailsHandler)
+roomsRouter.get(
+    '/details',
+    (...args) => authenticateFirebaseToken(...args, UserRole.USER),
+    getRoomDetailsHandler
+)
 
 // POST /bookings
 roomsRouter.post(
@@ -23,6 +31,10 @@ roomsRouter.post(
 );
 
 // GET /bookings
-roomsRouter.get('/', getAllRoomsHandler);
+roomsRouter.get(
+    '/',
+    (...args) => authenticateFirebaseToken(...args, UserRole.GUEST),
+    getAllRoomsHandler
+);
 
 export default roomsRouter;

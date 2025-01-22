@@ -5,6 +5,7 @@ import { BookingsCollection } from '../../database/collections/BookingsCollectio
 import { container } from 'tsyringe';
 import { RoomsService } from '../../services/RoomsService';
 import { DITokens } from '../../di-tokens';
+import { UsersService } from '../../services/UsersService';
 
 /**
  * Create a new booking in the database.
@@ -17,11 +18,10 @@ export async function createBookingHandler(req: Request, res: Response): Promise
         const BookingValidator = container.resolve<BookingValidator>(DITokens.bookingValidator);
         const RoomService = container.resolve<RoomsService>(DITokens.roomsService);
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
+        const UserService = container.resolve<UsersService>(DITokens.userService);
 
-        //TODO: pair booking with userId
-        const data = await BookingValidator.mapItemWithDefaultValue(
-            BookingValidator.parseCreation(req.body)
-        );
+        const bookingData = BookingValidator.parseCreation(req.body);
+        const data = await BookingValidator.mapItemWithDefaultValue(bookingData, UserService.getUserUIDdByHeader(req));
 
         if (!(await RoomService.isRoomAvailable(data)).isAvailable) {
             res.status(400).json({ message: 'No room available' });

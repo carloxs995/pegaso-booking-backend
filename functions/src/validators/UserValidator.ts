@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import { injectable } from "tsyringe";
 import { z } from 'zod';
-import { UserBase } from '../models/user.model';
+import { UserBase, UserLogin } from '../models/user.model';
 
 @injectable()
 export class UserValidator {
@@ -13,7 +13,11 @@ export class UserValidator {
         password: z.string().min(6, 'password is mandatory')
     });
 
-    parseCreation(request: UserBase) {
+    parseCreation(request: UserBase): UserBase {
         return UserValidator.BaseSchema.strict().strip().parse(request);
+    }
+
+    parseLogin(request: UserLogin): UserLogin {
+        return UserValidator.BaseSchema.omit({ firstName: true, lastName: true }).strict().strip().parse(request);
     }
 }

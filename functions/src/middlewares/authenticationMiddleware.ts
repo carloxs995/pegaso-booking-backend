@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import * as admin from 'firebase-admin';
 import { UserRole } from '../models/user.model';
+import { container } from 'tsyringe';
+import { UsersService } from '../services/UsersService';
 
 export async function authenticateFirebaseToken(
     req: Request,
@@ -20,18 +21,18 @@ export async function authenticateFirebaseToken(
         return;
     }
 
-    const idToken = authHeader.split(' ')[1];
-
     try {
-        const userData = await admin.auth().verifyIdToken(idToken);
+        const userService = container.resolve<UsersService>(UsersService);
+        const userData = await userService.getUser(authHeader);
         const userRole = userData.role;
 
-        if (!userData.email_verified || userRole < minUserRole) {
-            throw new Error();
+        if (userRole < minUserRole) {
+            throw new Error('User Role not enabled');
         }
 
+        req = userService.setUserUIDOnRequestHeader(req, userData.uid);
         next();
-    } catch (error) {
-        res.status(403).json({ message: 'Access not permitted' });
+    } catch (error: any) {
+        res.status(403).json({ message: `Access not permitted: ${error?.message}` });
     }
 }

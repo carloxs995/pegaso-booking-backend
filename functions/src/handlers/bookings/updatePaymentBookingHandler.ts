@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { BookingsCollection } from '../../database/collections/BookingsCollection';
 import { container } from 'tsyringe';
 import { DITokens } from '../../di-tokens';
+import { UsersService } from '../../services/UsersService';
 
 /**
  * Confirm as Paid an existing booking in the database.
@@ -15,17 +16,22 @@ export async function updatePaymentBookingHandler(req: Request, res: Response): 
     const { id } = req.params;
     try {
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
+        const UserService = container.resolve<UsersService>(DITokens.userService);
 
-        const item = await BookingsCollection.getItemById(id);
+        const item = await BookingsCollection.getItemById(id, UserService.getUserUIDdByHeader(req));
         if (!item) {
             res.status(404).json({ message: 'Booking not found' });
             return;
         }
 
-        await BookingsCollection.updateItem(id, {
-            isPaid: true,
-            status: BookingValidator.StatusSchema.enum.confirmed
-        });
+        await BookingsCollection.updateItem(
+            id,
+            {
+                isPaid: true,
+                status: BookingValidator.StatusSchema.enum.confirmed
+            },
+            UserService.getUserUIDdByHeader(req)
+        );
 
         res.status(204).json(null);
     } catch (error: any) {

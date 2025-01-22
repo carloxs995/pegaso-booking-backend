@@ -6,6 +6,7 @@ import { RoomValidator } from './RoomValidator';
 import { container, injectable } from 'tsyringe';
 import { RoomsService } from '../services/RoomsService';
 import { DITokens } from '../di-tokens';
+import { UsersService } from '../services/UsersService';
 
 @injectable()
 export class BookingValidator {
@@ -58,7 +59,7 @@ export class BookingValidator {
             .parse(request);
     }
 
-    async mapItemWithDefaultValue(item: IBookingBase): Promise<IBookingDetails> {
+    async mapItemWithDefaultValue(item: IBookingBase, userUid: string): Promise<IBookingDetails> {
         const RoomsService = container.resolve<RoomsService>(DITokens.roomsService);
 
         return {
@@ -68,7 +69,8 @@ export class BookingValidator {
             status: BookingValidator.StatusSchema.Enum.pending,
             paymentMethod: BookingValidator.PaymentMethodSchema.Enum.cash,
             updatedAt: new Date().toISOString(),
-            servicePrice: await RoomsService.calculateRoomPrice(item.serviceName, item.checkInDate, item.checkOutDate, item.quantityGuests)
+            servicePrice: await RoomsService.calculateRoomPrice(item.serviceName, item.checkInDate, item.checkOutDate, item.quantityGuests),
+            createdBy: userUid
         }
     }
 }
