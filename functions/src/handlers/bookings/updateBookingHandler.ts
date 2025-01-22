@@ -16,6 +16,8 @@ export async function updateBookingHandler(req: Request, res: Response): Promise
     try {
         const BookingValidator = container.resolve<BookingValidator>(DITokens.bookingValidator);
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
+
+        //TODO: add check if booking is related to UserId
         const data = BookingValidator.parseUpdate(req.body);
         await BookingsCollection.updateItem(id, data);
         res.status(204).json(null);

@@ -5,29 +5,51 @@ import { createBookingHandler } from '../handlers/bookings/createBookingHandler'
 import { updateBookingHandler } from '../handlers/bookings/updateBookingHandler';
 import { deleteBookingHandler } from '../handlers/bookings/deleteBookingHandler';
 import { updatePaymentBookingHandler } from '../handlers/bookings/updatePaymentBookingHandler';
-// import { authenticateFirebaseToken } from '../middlewares/authenticationMiddleware';
+import { authenticateFirebaseToken } from '../middlewares/authenticationMiddleware';
+import { UserRole } from '../models/user.model';
 
 const bookingsRouter = Router();
 
 // GET /bookings
-// TODO: make strict access to Admin
-bookingsRouter.get('/', getAllBookingsHandler);
+bookingsRouter.get(
+    '/',
+    (...args) => authenticateFirebaseToken(...args, UserRole.ADMIN),
+    getAllBookingsHandler
+);
 
 // GET /bookings/:id
-bookingsRouter.get('/:id', getBookingDetailsHandler);
+bookingsRouter.get(
+    '/:id',
+    (...args) => authenticateFirebaseToken(...args, UserRole.USER),
+    getBookingDetailsHandler
+);
 
 // POST /bookings
-bookingsRouter.post('/', createBookingHandler);
+bookingsRouter.post(
+    '/',
+    (...args) => authenticateFirebaseToken(...args, UserRole.USER),
+    createBookingHandler
+);
 
 // PUT /bookings/:id
-bookingsRouter.put('/:id', updateBookingHandler);
+bookingsRouter.put(
+    '/:id',
+    (...args) => authenticateFirebaseToken(...args, UserRole.USER),
+    updateBookingHandler
+);
 
 // PUT /bookings/:id/confirm
-// TODO: make strict access to Admin
-bookingsRouter.put('/:id/confirm', updatePaymentBookingHandler);
+bookingsRouter.put(
+    '/:id/confirm',
+    (...args) => authenticateFirebaseToken(...args, UserRole.ADMIN),
+    updatePaymentBookingHandler
+);
 
 // DELETE /bookings/:id
-// TODO: make strict access to Admin
-bookingsRouter.delete('/:id', deleteBookingHandler);
+bookingsRouter.delete(
+    '/:id',
+    (...args) => authenticateFirebaseToken(...args, UserRole.ADMIN),
+    deleteBookingHandler
+);
 
 export default bookingsRouter;

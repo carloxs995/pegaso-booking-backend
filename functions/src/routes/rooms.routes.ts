@@ -3,9 +3,12 @@ import { checkAvailabilityRoomHandler } from "../handlers/rooms/checkRoomAvailab
 import { createRoomHandler } from "../handlers/rooms/createRoomHandler";
 import { getRoomDetailsHandler } from "../handlers/rooms/getRoomDetailsHandler";
 import { getAllRoomsHandler } from "../handlers/rooms/getAllRoomsHandler";
+import { authenticateFirebaseToken } from "../middlewares/authenticationMiddleware";
+import { UserRole } from "../models/user.model";
 
-export const roomsRouter = Router();
+const roomsRouter = Router();
 
+//TODO: Add Guard
 //GET /rooms/check-availability
 roomsRouter.get('/check-availability', checkAvailabilityRoomHandler)
 
@@ -13,7 +16,13 @@ roomsRouter.get('/check-availability', checkAvailabilityRoomHandler)
 roomsRouter.get('/details', getRoomDetailsHandler)
 
 // POST /bookings
-roomsRouter.post('/', createRoomHandler);
+roomsRouter.post(
+    '/',
+    (...args) => authenticateFirebaseToken(...args, UserRole.ADMIN),
+    createRoomHandler
+);
 
 // GET /bookings
 roomsRouter.get('/', getAllRoomsHandler);
+
+export default roomsRouter;

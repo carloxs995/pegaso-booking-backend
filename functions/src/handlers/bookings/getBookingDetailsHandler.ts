@@ -13,6 +13,7 @@ export async function getBookingDetailsHandler(req: Request, res: Response): Pro
     const { id } = req.params;
     try {
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
+        //TODO: add check if booking is related to UserId
         const item = await BookingsCollection.getItemById(id);
         if (!item) {
             res.status(404).json({ message: 'Booking not found' });

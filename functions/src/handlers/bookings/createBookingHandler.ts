@@ -18,6 +18,7 @@ export async function createBookingHandler(req: Request, res: Response): Promise
         const RoomService = container.resolve<RoomsService>(DITokens.roomsService);
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
 
+        //TODO: pair booking with userId
         const data = await BookingValidator.mapItemWithDefaultValue(
             BookingValidator.parseCreation(req.body)
         );

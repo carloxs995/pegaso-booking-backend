@@ -4,4 +4,6 @@ export const DITokens = {
     bookingValidator: Symbol("BOOKING_VALIDATOR"),
     bookingsCollection: Symbol("BOOKING_COLLECTION"),
     roomsCollection: Symbol("ROOMS_COLLECTION"),
+    userValidator: Symbol("USER_VALIDATOR"),
+    userService: Symbol("USER_SERVICE")
 };

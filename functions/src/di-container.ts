@@ -7,6 +7,8 @@ import { BookingValidator } from "./validators/BookingValidator";
 import { BookingsCollection } from "./database/collections/BookingsCollection";
 import { RoomsCollection } from "./database/collections/RoomsCollection";
 import { DITokens } from "./di-tokens";
+import { UsersService } from "./services/UsersService";
+import { UserValidator } from "./validators/UserValidator";
 
 // Registrazione delle dipendenze nel container DI
 container.register(
@@ -37,6 +39,24 @@ container.register(
                 c.resolve(DITokens.bookingsCollection),
                 c.resolve(DITokens.roomsCollection)
             )
+        )
+    }
+);
+
+container.register(
+    DITokens.userService,
+    {
+        useFactory: instanceCachingFactory(
+            () => new UsersService()
+        )
+    }
+);
+
+container.register(
+    DITokens.userValidator,
+    {
+        useFactory: instanceCachingFactory(
+            () => new UserValidator()
         )
     }
 );
