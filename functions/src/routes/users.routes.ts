@@ -12,7 +12,7 @@ usersRouter.post(
     createUserHandler
 );
 
-usersRouter.post(
+usersRouter.get(
     '/me',
     (...args) => authenticateFirebaseToken(...args, UserRole.USER),
     getUserHandler
