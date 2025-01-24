@@ -13,7 +13,7 @@ export async function getAllRoomsHandler(req: Request, res: Response): Promise<v
     try {
         const RoomsCollection = container.resolve<RoomsCollection>(DITokens.roomsCollection);
         const rooms = await RoomsCollection.getAllItems();
-        res.status(200).json(rooms);
+        res.status(200).json({ data: rooms });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }

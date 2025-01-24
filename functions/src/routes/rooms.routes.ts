@@ -22,14 +22,14 @@ roomsRouter.get(
     getRoomDetailsHandler
 )
 
-// POST /bookings
+// POST /rooms
 roomsRouter.post(
     '/',
     (...args) => authenticateFirebaseToken(...args, UserRole.ADMIN),
     createRoomHandler
 );
 
-// GET /bookings
+// GET /rooms
 roomsRouter.get(
     '/',
     (...args) => authenticateFirebaseToken(...args, UserRole.GUEST),
