@@ -15,9 +15,9 @@ roomsRouter.get(
     checkAvailabilityRoomHandler
 );
 
-//GET /details?type={TYPE}
+//GET /:id/details
 roomsRouter.get(
-    '/details',
+    '/:id/details',
     (...args) => authenticateFirebaseToken(...args, UserRole.USER),
     getRoomDetailsHandler
 )

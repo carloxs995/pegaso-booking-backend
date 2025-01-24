@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { RoomsCollection } from '../../database/collections/RoomsCollection';
-import { IRoomType } from '../../models/room.model';
 import { DITokens } from '../../di-tokens';
 
 /**
@@ -11,17 +10,13 @@ import { DITokens } from '../../di-tokens';
  * @return {Promise<void>} The response with the created booking ID.
  */
 export async function getRoomDetailsHandler(req: Request, res: Response): Promise<void> {
-    const { type } = req.query;
-
-    if (!type) {
-        res.status(400).json({ message: `type param is required` });
-    }
+    const { id } = req.params;
 
     try {
         const RoomsCollection = container.resolve<RoomsCollection>(DITokens.roomsCollection);
-        const item = await RoomsCollection.getItemByType(type as IRoomType);
+        const item = await RoomsCollection.getItemById(id);
         if (!item) {
-            res.status(404).json({ message: `Room ${type} not found` });
+            res.status(404).json({ message: `Room ${id} not found` });
             return;
         }
 
