@@ -10,8 +10,9 @@ export class RoomsCollection {
 
     async addItem(item: IRoomBase): Promise<string> {
         try {
-            const res = await this.collection.add(item);
-            return res.id;
+            const itemCreated = await this.collection.add(item);
+            await itemCreated.update({ id: itemCreated.id });
+            return itemCreated.id;
         } catch (e: any) {
             throw new Error(`RoomsCollection addItem error:'${e?.message}`)
         }
@@ -53,12 +54,12 @@ export class RoomsCollection {
     async getAllItems(): Promise<IRoomDetails[]> {
         try {
             const data = await this.collection.get();
-            const bookings: any = [];
+            const rooms: any = [];
             data.forEach((doc) => {
-                bookings.push({ id: doc.id, ...doc.data() });
+                rooms.push({ id: doc.id, ...doc.data() });
             });
 
-            return bookings as IRoomDetails[];
+            return rooms as IRoomDetails[];
         } catch (e: any) {
             throw new Error(`RoomsCollection getAllItems error:'${e?.message}`)
         }
@@ -70,10 +71,8 @@ export class RoomsCollection {
             if (!item.exists) {
                 return undefined;
             }
-            return {
-                id: item.id,
-                ...item.data()
-            } as IRoomDetails;
+
+            return item.data() as IRoomDetails;
         } catch (e: any) {
             throw new Error(`RoomsCollection getItemById error:'${e?.message}`)
         }

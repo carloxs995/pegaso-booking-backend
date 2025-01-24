@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { z } from 'zod';
-import { IBookingBase, IBookingDetails } from '../models/booking.model';
+import { IBookingBase, IBookingDetails, IBookingsFiltersListSchema } from '../models/booking.model';
 import { RoomValidator } from './RoomValidator';
 import { container, injectable } from 'tsyringe';
 import { RoomsService } from '../services/RoomsService';
@@ -40,6 +40,20 @@ export class BookingValidator {
         paymentMethod: BookingValidator.PaymentMethodSchema.default(BookingValidator.PaymentMethodSchema.Enum.cash).optional(), //only accepted Cash method
     });
 
+    static readonly BookingsFiltersListSchema = z.object({
+        serviceType: RoomValidator.RoomTypeEnum.optional(),
+        checkInDate: z.string().optional().refine(date => date === undefined || !isNaN(Date.parse(date)), {
+            message: "Invalid check-in date format. Must be a valid date string."
+        }),
+        checkOutDate: z.string().optional().refine(date => date === undefined || !isNaN(Date.parse(date)), {
+            message: "Invalid check-out date format. Must be a valid date string."
+        }),
+        pagination: z.object({
+            continuation: z.string().nullable(),
+            pageSize: z.number().int().positive().default(15),
+        }).optional()
+    });
+
     parseCreation(request: IBookingBase) {
         return BookingValidator.BaseSchema.strict().strip().parse(request);
     }
@@ -63,6 +77,7 @@ export class BookingValidator {
 
         return {
             ...item,
+            id: '',
             createdAt: new Date().toISOString(),
             isPaid: false,
             status: BookingValidator.StatusSchema.Enum.pending,
@@ -71,5 +86,9 @@ export class BookingValidator {
             servicePrice: await RoomsService.calculateRoomPrice(item.serviceName, item.checkInDate, item.checkOutDate, item.quantityGuests),
             createdBy: userUid
         }
+    }
+
+    parseFilters(filters: IBookingsFiltersListSchema) {
+        return BookingValidator.BookingsFiltersListSchema.strict().strip().parse(filters);
     }
 }

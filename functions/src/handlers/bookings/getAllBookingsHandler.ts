@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { BookingsCollection } from '../../database/collections/BookingsCollection';
 import { DITokens } from '../../di-tokens';
+import { BookingValidator } from '../../validators/BookingValidator';
+import { z } from 'zod';
 
 /**
  * Get all bookings from the database.
@@ -11,10 +13,18 @@ import { DITokens } from '../../di-tokens';
  */
 export async function getAllBookingsHandler(req: Request, res: Response): Promise<void> {
     try {
+        const BookingValidator = container.resolve<BookingValidator>(DITokens.bookingValidator);
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
-        const bookings = await BookingsCollection.getAllItems();
-        res.status(200).json(bookings);
+        const filters = BookingValidator.parseFilters(req.params);
+        const bookings = await BookingsCollection.getAllItems(filters);
+        res.status(200).json({ data: bookings });
     } catch (error: any) {
+        if (error instanceof z.ZodError) {
+            res.status(400).json({
+                message: 'Input data not valid',
+                errors: error.errors,
+            });
+        }
         res.status(500).json({ error: error.message });
     }
 }

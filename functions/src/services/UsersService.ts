@@ -25,9 +25,9 @@ export class UsersService {
         try {
             const token = bearerToken.split(' ')[1];
             const decodedToken = await admin.auth().verifyIdToken(token);
-            if (!decodedToken.email_verified) {
-                throw new Error('Email not verified');
-            }
+            // if (!decodedToken.email_verified) { //TODO: pensare se introdurre la verifica dell'email
+            //     throw new Error('Email not verified');
+            // }
 
             return decodedToken;
         } catch (e: any) {
