@@ -30,7 +30,7 @@ export async function authenticateFirebaseToken(
             throw new Error('User Role not enabled');
         }
 
-        req = userService.setUserUIDOnRequestHeader(req, userData.uid);
+        req = userService.setUserUIDOnRequestHeader(req, userData.uid, userRole);
         next();
     } catch (error: any) {
         res.status(403).json({ message: `Access not permitted: ${error?.message}` });

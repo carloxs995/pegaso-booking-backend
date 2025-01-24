@@ -25,7 +25,7 @@ container.register(
     DITokens.bookingsCollection,
     {
         useFactory: instanceCachingFactory(
-            c => new BookingsCollection(c.resolve(DITokens.userService))
+            c => new BookingsCollection()
         )
     }
 );

@@ -16,7 +16,7 @@ export async function getBookingDetailsHandler(req: Request, res: Response): Pro
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
         const UserService = container.resolve<UsersService>(DITokens.userService);
 
-        const item = await BookingsCollection.getItemById(id, UserService.getUserUIDdByHeader(req));
+        const item = await BookingsCollection.getItemById(id, UserService.getUserUIDdByHeader(req), UserService.getUserRoledByHeader(req));
 
         if (!item) {
             res.status(404).json({ message: 'Booking not found' });

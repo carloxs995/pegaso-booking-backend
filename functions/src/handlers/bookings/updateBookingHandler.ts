@@ -19,7 +19,7 @@ export async function updateBookingHandler(req: Request, res: Response): Promise
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
         const UserService = container.resolve<UsersService>(DITokens.userService);
         const data = BookingValidator.parseUpdate(req.body);
-        await BookingsCollection.updateItem(id, data, UserService.getUserUIDdByHeader(req));
+        await BookingsCollection.updateItem(id, data, UserService.getUserUIDdByHeader(req), UserService.getUserRoledByHeader(req));
         res.status(204).json(null);
     } catch (error: any) {
         if (error instanceof z.ZodError) {

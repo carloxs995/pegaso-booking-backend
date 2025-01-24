@@ -1,20 +1,13 @@
 import 'reflect-metadata';
 
-import { inject, injectable } from "tsyringe";
+import { injectable } from "tsyringe";
 import { IBookingDetails, IBookingsFiltersListSchema } from "../../models/booking.model";
 import { dbFirestore } from "../firestore";
-import { DITokens } from '../../di-tokens';
-import { UsersService } from '../../services/UsersService';
 import { UserRole } from '../../models/user.model';
 
 @injectable()
 export class BookingsCollection {
     readonly collection = dbFirestore.collection('bookings');
-
-    constructor(
-        @inject(DITokens.userService) private readonly _userService: UsersService
-    ) {
-    }
 
     async addItem(item: IBookingDetails): Promise<string> {
         try {
@@ -26,9 +19,9 @@ export class BookingsCollection {
         }
     }
 
-    async updateItem(id: string, item: Partial<IBookingDetails>, currentUserUid: string): Promise<string> {
+    async updateItem(id: string, item: Partial<IBookingDetails>, currentUserUid: string, userRole: UserRole): Promise<string> {
         try {
-            await this.getItemById(id, currentUserUid);
+            await this.getItemById(id, currentUserUid, userRole);
             await this.collection.doc(id).update(item as { [key: string]: any });
             return id;
         } catch (e: any) {
@@ -55,6 +48,12 @@ export class BookingsCollection {
             }
             if (filters?.checkOutDate) {
                 queryBase = queryBase.where('checkOutDate', '>', filters.checkInDate);
+            }
+            if (filters?.isPaid) {
+                queryBase = queryBase.where('isPaid', '==', filters.isPaid);
+            }
+            if (filters?.serviceName) {
+                queryBase = queryBase.where('serviceName', '>', filters.serviceName);
             }
 
             queryBase = queryBase.orderBy('id');
@@ -83,9 +82,8 @@ export class BookingsCollection {
         }
     }
 
-    async getItemById(id: string, currentUserUid: string): Promise<IBookingDetails | undefined> {
+    async getItemById(id: string, currentUserUid: string, role: UserRole): Promise<IBookingDetails | undefined> {
         try {
-            const userData = await this._userService.getUser(currentUserUid);
             const item = await this.collection
                 .doc(id)
                 .get();
@@ -98,7 +96,7 @@ export class BookingsCollection {
                 ...item.data()
             } as IBookingDetails;
 
-            if (userData.role !== UserRole.ADMIN && bookingDetails.createdBy !== userData.uid) {
+            if (role !== UserRole.ADMIN && bookingDetails.createdBy !== currentUserUid) {
                 throw new Error('Item not accessible');
             }
 

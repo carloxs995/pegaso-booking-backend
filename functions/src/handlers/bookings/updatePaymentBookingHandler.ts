@@ -18,7 +18,7 @@ export async function updatePaymentBookingHandler(req: Request, res: Response): 
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
         const UserService = container.resolve<UsersService>(DITokens.userService);
 
-        const item = await BookingsCollection.getItemById(id, UserService.getUserUIDdByHeader(req));
+        const item = await BookingsCollection.getItemById(id, UserService.getUserUIDdByHeader(req), UserService.getUserRoledByHeader(req));
         if (!item) {
             res.status(404).json({ message: 'Booking not found' });
             return;
@@ -30,7 +30,8 @@ export async function updatePaymentBookingHandler(req: Request, res: Response): 
                 isPaid: true,
                 status: BookingValidator.StatusSchema.enum.confirmed
             },
-            UserService.getUserUIDdByHeader(req)
+            UserService.getUserUIDdByHeader(req),
+            UserService.getUserRoledByHeader(req)
         );
 
         res.status(204).json(null);

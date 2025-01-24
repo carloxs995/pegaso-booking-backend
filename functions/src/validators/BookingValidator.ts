@@ -51,7 +51,9 @@ export class BookingValidator {
         pagination: z.object({
             continuation: z.string().nullable(),
             pageSize: z.number().int().positive().default(15),
-        }).optional()
+        }).optional(),
+        serviceName: RoomValidator.RoomTypeEnum.optional(),
+        isPaid: z.boolean().optional()
     });
 
     parseCreation(request: IBookingBase) {

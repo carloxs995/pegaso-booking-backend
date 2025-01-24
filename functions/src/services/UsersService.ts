@@ -14,12 +14,14 @@ export class UsersService {
 
     constructor() { }
 
-    setUserUIDOnRequestHeader = (request: Request, uid: string): Request => {
-        request.headers['firebase-user-uid'] = uid;
+    setUserUIDOnRequestHeader = (request: Request, uid: string, role: UserRole): Request => {
+        request.headers['x-firebase-user-uid'] = uid;
+        request.headers['x-firebase-user-role'] = role.toString();
         return request;
     }
 
-    getUserUIDdByHeader = (request: Request): string => (request.headers['firebase-user-uid'] ?? '') as string;
+    getUserUIDdByHeader = (request: Request): string => (request.headers['x-firebase-user-uid'] ?? '') as string;
+    getUserRoledByHeader = (request: Request): UserRole => Number(request.headers['x-firebase-user-role']) ?? UserRole.GUEST;
 
     private async _verifyToken(bearerToken: string): Promise<admin.auth.DecodedIdToken> {
         try {
