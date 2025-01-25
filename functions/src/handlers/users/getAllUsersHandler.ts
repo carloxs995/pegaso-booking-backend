@@ -13,7 +13,7 @@ export async function getAllUsersHandler(req: Request, res: Response): Promise<v
     const { pageSize, pageToken } = req.query;
 
     try {
-        const defaultPageSize = Number(pageSize) ?? 50;
+        const defaultPageSize = !isNaN(Number(pageSize)) ? Number(pageSize) : 50;
         const UsersService = container.resolve<UsersService>(DITokens.userService);
         const users = await UsersService.getUsersList(defaultPageSize, String(pageToken));
         res.status(200).json({ data: users });
