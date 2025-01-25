@@ -5,6 +5,7 @@ import { getRoomDetailsHandler } from "../handlers/rooms/getRoomDetailsHandler";
 import { getAllRoomsHandler } from "../handlers/rooms/getAllRoomsHandler";
 import { authenticateFirebaseToken } from "../middlewares/authenticationMiddleware";
 import { UserRole } from "../models/user.model";
+import { updateRoomHandler } from "../handlers/rooms/updateRoomHandler";
 
 const roomsRouter = Router();
 
@@ -36,6 +37,11 @@ roomsRouter.get(
     getAllRoomsHandler
 );
 
-//TODO: IMPLEMENTARE API PER MODIFICARE SERVIZIO
+// PUT /rooms
+roomsRouter.put(
+    '/:id',
+    (...args) => authenticateFirebaseToken(...args, UserRole.ADMIN),
+    updateRoomHandler
+);
 
 export default roomsRouter;

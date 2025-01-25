@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { injectable } from "tsyringe";
-import { IBookingDetails, IBookingsFiltersListSchema } from "../../models/booking.model";
+import { IBookingDetails, IBookingList, IBookingsFiltersListSchema } from "../../models/booking.model";
 import { dbFirestore } from "../firestore";
 import { UserRole } from '../../models/user.model';
 
@@ -29,15 +29,16 @@ export class BookingsCollection {
         }
     }
 
-    async deleteItem(id: string): Promise<void> {
+    async deleteItem(id: string, currentUserUid: string, userRole: UserRole): Promise<void> {
         try {
+            await this.getItemById(id, currentUserUid, userRole);
             await this.collection.doc(id).delete();
         } catch (e: any) {
             throw new Error(`BookingCollection deleteItem error:'${e?.message}`)
         }
     }
 
-    async getAllItems(filters?: IBookingsFiltersListSchema): Promise<{ items: IBookingDetails[], continuation: string | null, isLastPage: boolean, totalCount: number }> {
+    async getAllItems(filters?: IBookingsFiltersListSchema): Promise<IBookingList> {
         try {
             let queryBase: FirebaseFirestore.Query = this.collection;
             if (filters?.serviceType) {
@@ -91,10 +92,7 @@ export class BookingsCollection {
             if (!item.exists) {
                 return undefined;
             }
-            const bookingDetails = {
-                id: item.id,
-                ...item.data()
-            } as IBookingDetails;
+            const bookingDetails = item.data() as IBookingDetails;
 
             if (role !== UserRole.ADMIN && bookingDetails.createdBy !== currentUserUid) {
                 throw new Error('Item not accessible');

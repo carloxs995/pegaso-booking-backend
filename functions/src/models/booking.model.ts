@@ -19,3 +19,10 @@ export interface IBookingDetails extends IBookingBase {
     paymentMethod: PaymentMethod;
     createdBy: string;
 }
+
+export interface IBookingList {
+    items: IBookingDetails[],
+    continuation: string | null,
+    isLastPage: boolean,
+    totalCount: number
+}

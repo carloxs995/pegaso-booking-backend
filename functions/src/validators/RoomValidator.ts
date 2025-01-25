@@ -28,4 +28,14 @@ export class RoomValidator {
     parseCreation(request: IRoomBase) {
         return RoomValidator.BaseSchema.strict().strip().parse(request);
     }
+
+    parseUpdate(request: IRoomBase) {
+        return RoomValidator.BaseSchema
+            .omit({
+                type: true
+            })
+            .strict()
+            .strip()
+            .parse(request);
+    }
 }

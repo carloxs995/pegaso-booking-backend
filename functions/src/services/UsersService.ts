@@ -81,4 +81,13 @@ export class UsersService {
             lastName: userData.lastName
         }
     }
+
+    async getUsersList(pageSize: number, pageToken?: string): Promise<admin.auth.ListUsersResult> {
+        if (!pageToken) {
+            pageToken = undefined;
+        }
+
+        const listUsersResult = await admin.auth().listUsers(pageSize, pageToken);
+        return listUsersResult;
+    }
 }

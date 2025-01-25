@@ -48,7 +48,7 @@ bookingsRouter.put(
 // DELETE /bookings/:id
 bookingsRouter.delete(
     '/:id',
-    (...args) => authenticateFirebaseToken(...args, UserRole.ADMIN),
+    (...args) => authenticateFirebaseToken(...args, UserRole.USER),
     deleteBookingHandler
 );
 
