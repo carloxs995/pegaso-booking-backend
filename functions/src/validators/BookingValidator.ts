@@ -30,24 +30,29 @@ export class BookingValidator {
         customerPhone: z.string().min(1, 'customerPhone not valid').max(13, 'customerPhone not valid'),
         serviceName: RoomValidator.RoomTypeEnum,
         quantityGuests: z.number().int().positive('quantityGuests not valid'),
-        checkInDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-            message: 'checkInDate not valid',
-        }),
-        checkOutDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-            message: 'checkOutDate not valid',
-        }),
+        checkInDate: z.string().refine(date => !date || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(date), {
+            message: "Check-in date must be in ISO format (YYYY-MM-DDTHH:mm:ss.sssZ)."
+        })
+            .optional(),
+        checkOutDate:z.string().refine(date => !date || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(date), {
+            message: "Check-out date must be in ISO format (YYYY-MM-DDTHH:mm:ss.sssZ)."
+        })
+            .optional(),
         notes: z.string().optional(),
         paymentMethod: BookingValidator.PaymentMethodSchema.default(BookingValidator.PaymentMethodSchema.Enum.cash).optional(), //only accepted Cash method
     });
 
     static readonly BookingsFiltersListSchema = z.object({
         serviceType: RoomValidator.RoomTypeEnum.optional(),
-        checkInDate: z.string().optional().refine(date => date === undefined || !isNaN(Date.parse(date)), {
-            message: "Invalid check-in date format. Must be a valid date string."
-        }),
-        checkOutDate: z.string().optional().refine(date => date === undefined || !isNaN(Date.parse(date)), {
-            message: "Invalid check-out date format. Must be a valid date string."
-        }),
+        checkInDate: z.string().refine(date => !date || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(date), {
+            message: "Check-in date must be in ISO format (YYYY-MM-DDTHH:mm:ss.sssZ)."
+        })
+            .optional(),
+        checkOutDate: z.string()
+            .refine(date => !date || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(date), {
+                message: "Check-out date must be in ISO format (YYYY-MM-DDTHH:mm:ss.sssZ)."
+            })
+            .optional(),
         pagination: z.object({
             continuation: z.string().nullable(),
             pageSize: z.number().int().positive().default(15),
