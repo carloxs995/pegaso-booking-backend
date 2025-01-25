@@ -63,8 +63,10 @@ export class UsersService {
             const { uid } = await this._verifyToken(bearerToken);
             const userData = await admin.auth().getUser(uid);
             return {
-                uid: userData.uid,
-                email: userData.email,
+                id: userData.uid,
+                email: userData.email!,
+                emailVerified: userData.emailVerified,
+                disabled: userData.disabled,
                 firstName: userData.customClaims?.firstName,
                 lastName: userData.customClaims?.lastName,
                 role: userData.customClaims?.role,
@@ -82,12 +84,25 @@ export class UsersService {
         }
     }
 
-    async getUsersList(pageSize: number, pageToken?: string): Promise<admin.auth.ListUsersResult> {
+    async getUsersList(pageSize: number, pageToken?: string): Promise<UserBaseDetails[]> {
         if (!pageToken) {
             pageToken = undefined;
         }
 
         const listUsersResult = await admin.auth().listUsers(pageSize, pageToken);
-        return listUsersResult;
+
+        const usersListsRemapped = listUsersResult.users.map(
+            user => ({
+                id: user.uid,
+                email: user.email!,
+                emailVerified: user.emailVerified,
+                disabled: user.disabled,
+                role: user.customClaims?.role,
+                firstName: user.customClaims?.firstName,
+                lastName: user.customClaims?.lastName,
+            }) satisfies UserBaseDetails
+        );
+
+        return usersListsRemapped;
     }
 }

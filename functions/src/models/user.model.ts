@@ -16,4 +16,4 @@ export interface UserCustomClaims {
 
 export type UserBase = z.infer<typeof UserValidator.BaseSchema>;
 export type UserLogin = Pick<UserBase, 'email' | 'password'>;
-export type UserBaseDetails = Pick<admin.auth.UserRecord, 'uid' | 'email'> & UserCustomClaims;
+export type UserBaseDetails = Pick<admin.auth.UserRecord, | 'emailVerified' | 'disabled'> & UserCustomClaims & { id: string, email: string };
