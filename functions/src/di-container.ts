@@ -32,7 +32,14 @@ container.register(
 
 container.register(
     DITokens.roomsCollection,
-    { useFactory: instanceCachingFactory(() => new RoomsCollection()) }
+    {
+        useFactory: instanceCachingFactory(
+            c => new RoomsCollection(
+                c.resolve(DITokens.bookingsCollection
+                )
+            )
+        )
+    }
 );
 
 container.register(

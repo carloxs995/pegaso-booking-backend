@@ -64,13 +64,15 @@ export class BookingsCollection {
             }
 
             if (filters?.pagination?.pageSize) {
-                queryBase = queryBase.limit(filters?.pagination?.pageSize );
+                queryBase = queryBase.limit(filters?.pagination?.pageSize);
             }
 
-            const data = await queryBase.get();
+            const data = await queryBase
+                .orderBy('id')
+                .get();
             const bookings: IBookingDetails[] = data.docs.map((doc) => ({ id: doc.id, ...doc.data() } as IBookingDetails));
             const newLastVisible = bookings.length > 0 ? bookings[bookings.length - 1].id : null;
-            const isLastPage = filters?.pagination?.pageSize  ? bookings.length < filters?.pagination?.pageSize : false; //TODO: check if it's a bug
+            const isLastPage = filters?.pagination?.pageSize ? bookings.length < filters?.pagination?.pageSize : false; //TODO: check if it's a bug
 
             return {
                 items: bookings,

@@ -6,3 +6,5 @@ export type IRoomBase = z.infer<typeof RoomValidator.BaseSchema>;
 export type IRoomDetails = IRoomBase & {
     id: string;
 };
+
+export type RoomFilter = z.infer<typeof RoomValidator.RoomsFilterBaseSchema>;

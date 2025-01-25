@@ -17,6 +17,7 @@ export class RoomsService {
     async isRoomAvailable(
         booking: Pick<IBookingBase, 'checkInDate' | 'checkOutDate' | 'serviceName'>
     ): Promise<{ roomsMaxQuantity: number; freeRooms: number; isAvailable: boolean; }> {
+
         const roomDoc = await this._roomsCollection.getItemByType(booking.serviceName);
 
         if (!roomDoc) {
