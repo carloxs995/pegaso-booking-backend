@@ -84,7 +84,7 @@ export class UsersService {
         }
     }
 
-    async getUsersList(pageSize: number, pageToken?: string): Promise<UserBaseDetails[]> {
+    async getUsersList(pageSize: number, pageToken?: string): Promise<{ items: UserBaseDetails[], pageToken: string | undefined }> {
         if (!pageToken) {
             pageToken = undefined;
         }
@@ -103,6 +103,9 @@ export class UsersService {
             }) satisfies UserBaseDetails
         );
 
-        return usersListsRemapped;
+        return {
+            items: usersListsRemapped,
+            pageToken: listUsersResult.pageToken
+        };
     }
 }
