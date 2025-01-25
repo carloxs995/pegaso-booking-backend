@@ -68,7 +68,6 @@ export class BookingsCollection {
             }
 
             const data = await queryBase
-                .orderBy('id')
                 .get();
             const bookings: IBookingDetails[] = data.docs.map((doc) => ({ id: doc.id, ...doc.data() } as IBookingDetails));
             const newLastVisible = bookings.length > 0 ? bookings[bookings.length - 1].id : null;
