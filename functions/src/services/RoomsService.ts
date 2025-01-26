@@ -16,8 +16,8 @@ export class RoomsService {
 
     async isRoomAvailable(
         id: string,
-        booking: Pick<IBookingBase, 'checkInDate' | 'checkOutDate'>
-    ): Promise<{ roomsMaxQuantity: number; freeRooms: number; isAvailable: boolean; }> {
+        booking: Pick<IBookingBase, 'checkInDate' | 'checkOutDate' | 'quantityGuests'>
+    ): Promise<{ roomsMaxQuantity: number; freeRooms: number; isAvailable: boolean; totalPrice: number }> {
 
         const roomDoc = await this._roomsCollection.getItemById(id);
 
@@ -35,10 +35,14 @@ export class RoomsService {
 
         const isAvailable = !!(maxQuantity - bookings.totalCount);
 
+        const totalPrice = await this.calculateRoomPrice(roomDoc.type, booking.checkInDate, booking.checkOutDate, booking.quantityGuests)
+
+
         return {
             roomsMaxQuantity: maxQuantity,
             freeRooms: maxQuantity - bookings.totalCount,
-            isAvailable
+            isAvailable,
+            totalPrice
         };
     }
 
