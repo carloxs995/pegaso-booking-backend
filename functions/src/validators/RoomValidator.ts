@@ -22,7 +22,7 @@ export class RoomValidator {
         pricePerNight: z.number().positive("Price per night must be a positive number"),
         amenities: z.array(z.string()).min(1, "At least one amenity must be provided"),
         available: z.boolean().optional().default(true),
-        images: z.array(z.instanceof(Blob)).optional(), // Validazione per Blob array
+        images: z.array(z.string()).min(1, "At least one image must be provided"),
     });
 
     static readonly RoomsFilterBaseSchema = z.object({
