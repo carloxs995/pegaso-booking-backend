@@ -19,7 +19,7 @@ roomsRouter.get(
 //GET /:id/details
 roomsRouter.get(
     '/:id/details',
-    (...args) => authenticateFirebaseToken(...args, UserRole.USER),
+    (...args) => authenticateFirebaseToken(...args, UserRole.GUEST),
     getRoomDetailsHandler
 )
 
