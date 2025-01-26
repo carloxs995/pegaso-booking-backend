@@ -29,6 +29,7 @@ export class BookingValidator {
         customerEmail: z.string().email('customerEmail not valid'),
         customerPhone: z.string().min(1, 'customerPhone not valid').max(13, 'customerPhone not valid'),
         serviceName: RoomValidator.RoomTypeEnum,
+        serviceId: z.string().min(1, 'serviceId is mandatory'),
         quantityGuests: z.number().int().positive('quantityGuests not valid'),
         checkInDate: z.string().refine(date => !date || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(date), {
             message: "Check-in date must be in ISO format (YYYY-MM-DDTHH:mm:ss.sssZ)."

@@ -15,10 +15,11 @@ export class RoomsService {
     ) { }
 
     async isRoomAvailable(
-        booking: Pick<IBookingBase, 'checkInDate' | 'checkOutDate' | 'serviceName'>
+        id: string,
+        booking: Pick<IBookingBase, 'checkInDate' | 'checkOutDate'>
     ): Promise<{ roomsMaxQuantity: number; freeRooms: number; isAvailable: boolean; }> {
 
-        const roomDoc = await this._roomsCollection.getItemByType(booking.serviceName);
+        const roomDoc = await this._roomsCollection.getItemById(id);
 
         if (!roomDoc) {
             throw Error('isRoomAvailable: item not found');
@@ -27,7 +28,7 @@ export class RoomsService {
         const maxQuantity = roomDoc.totalRooms;
 
         const bookings = await this._bookingsCollection.getAllItems({
-            serviceType: booking.serviceName,
+            serviceType: roomDoc.type,
             checkInDate: booking.checkInDate,
             checkOutDate: booking.checkOutDate
         });

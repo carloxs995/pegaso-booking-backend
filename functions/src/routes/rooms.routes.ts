@@ -11,8 +11,8 @@ const roomsRouter = Router();
 
 //GET /rooms/check-availability
 roomsRouter.get(
-    '/check-availability',
-    (...args) => authenticateFirebaseToken(...args, UserRole.USER),
+    '/check-availability/:id',
+    (...args) => authenticateFirebaseToken(...args, UserRole.GUEST),
     checkAvailabilityRoomHandler
 );
 

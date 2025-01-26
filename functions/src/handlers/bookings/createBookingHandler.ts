@@ -23,7 +23,7 @@ export async function createBookingHandler(req: Request, res: Response): Promise
         const bookingData = BookingValidator.parseCreation(req.body);
         const data = await BookingValidator.mapItemWithDefaultValue(bookingData, UserService.getUserUIDdByHeader(req));
 
-        if (!(await RoomService.isRoomAvailable(data)).isAvailable) {
+        if (!(await RoomService.isRoomAvailable(bookingData.serviceId, data)).isAvailable) {
             res.status(400).json({ message: 'No room available' });
             return;
         }
