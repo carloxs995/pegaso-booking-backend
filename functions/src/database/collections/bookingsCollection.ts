@@ -53,9 +53,6 @@ export class BookingsCollection {
             if (filters?.isPaid) {
                 queryBase = queryBase.where('isPaid', '==', filters.isPaid);
             }
-            if (filters?.serviceName) {
-                queryBase = queryBase.where('serviceName', '>', filters.serviceName);
-            }
 
             queryBase = queryBase.orderBy('id');
 

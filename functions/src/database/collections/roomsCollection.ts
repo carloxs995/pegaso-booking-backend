@@ -5,6 +5,7 @@ import { IRoomBase, IRoomDetails, IRoomType, RoomFilter } from "../../models/roo
 import { dbFirestore } from "../firestore";
 import { DITokens } from '../../di-tokens';
 import { BookingsCollection } from './BookingsCollection';
+import { IBookingsFiltersListSchema } from '../../models/booking.model';
 
 @injectable()
 export class RoomsCollection {
@@ -76,8 +77,8 @@ export class RoomsCollection {
             });
 
             if (filters?.checkInDate && filters?.checkOutDate) {
-                const bookingFilters = {
-                    serviceName: filters?.serviceType,
+                const bookingFilters: IBookingsFiltersListSchema = {
+                    serviceType: filters?.serviceType,
                     checkInDate: filters?.checkInDate,
                     checkOutDate: filters?.checkOutDate //TODO: al momento stiamo ignorando il numero di ospiti
                 };
