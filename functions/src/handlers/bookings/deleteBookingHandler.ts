@@ -12,10 +12,11 @@ import { UsersService } from '../../services/UsersService';
  */
 export async function deleteBookingHandler(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
+    const { hardDelete } = req.body;
     try {
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
         const UserService = container.resolve<UsersService>(DITokens.userService);
-        await BookingsCollection.deleteItem(id, UserService.getUserUIDdByHeader(req), UserService.getUserRoledByHeader(req));
+        await BookingsCollection.deleteItem(id, UserService.getUserUIDdByHeader(req), UserService.getUserRoledByHeader(req), hardDelete);
         res.status(204).json(null);
     } catch (error: any) {
         res.status(500).json({ error: error.message });

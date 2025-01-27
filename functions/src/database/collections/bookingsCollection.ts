@@ -4,6 +4,7 @@ import { injectable } from "tsyringe";
 import { IBookingDetails, IBookingList, IBookingsFiltersListSchema } from "../../models/booking.model";
 import { dbFirestore } from "../firestore";
 import { UserRole } from '../../models/user.model';
+import { BookingValidator } from '../../validators/BookingValidator';
 
 @injectable()
 export class BookingsCollection {
@@ -29,10 +30,20 @@ export class BookingsCollection {
         }
     }
 
-    async deleteItem(id: string, currentUserUid: string, userRole: UserRole): Promise<void> {
+    async deleteItem(id: string, currentUserUid: string, userRole: UserRole, hardDelete: boolean = false): Promise<void> {
         try {
             await this.getItemById(id, currentUserUid, userRole);
-            await this.collection.doc(id).delete();
+
+            //IF ADMIN CALL THE DELETE WITH hardDelete param REMOVES THE BOOKING FROM DB
+            if (userRole === UserRole.ADMIN && hardDelete) {
+                await this.collection.doc(id).delete();
+                return;
+            }
+
+            await this.collection.doc(id).update({
+                isPaid: true,
+                status: BookingValidator.StatusSchema.enum.cancelled
+            });
         } catch (e: any) {
             throw new Error(`BookingCollection deleteItem error:'${e?.message}`)
         }
