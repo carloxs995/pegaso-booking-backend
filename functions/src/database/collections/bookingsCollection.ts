@@ -22,7 +22,9 @@ export class BookingsCollection {
 
     async updateItem(id: string, item: Partial<IBookingDetails>, currentUserUid: string, userRole: UserRole): Promise<string> {
         try {
-            await this.getItemById(id, currentUserUid, userRole);
+            if ((await this.getItemById(id, currentUserUid, userRole))?.status === 'cancelled') {
+                throw new Error('A booking with canceled status cannot be updated');
+            }
             await this.collection.doc(id).update(item as { [key: string]: any });
             return id;
         } catch (e: any) {
