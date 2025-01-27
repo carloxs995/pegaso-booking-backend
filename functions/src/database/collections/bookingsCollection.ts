@@ -51,7 +51,7 @@ export class BookingsCollection {
         }
     }
 
-    async getAllItems(filters: IBookingsFiltersListSchema = {}, currentUserUid: string, userRole: UserRole): Promise<IBookingList> {
+    async getAllItems(filters: IBookingsFiltersListSchema = {}, currentUserUid?: string, userRole?: UserRole): Promise<IBookingList> {
         try {
             let queryBase: FirebaseFirestore.Query = this.collection;
 
