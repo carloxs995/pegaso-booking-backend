@@ -51,9 +51,10 @@ export class BookingsCollection {
         }
     }
 
-    async getAllItems(filters?: IBookingsFiltersListSchema): Promise<IBookingList> {
+    async getAllItems(filters: IBookingsFiltersListSchema = {}, currentUserUid: string, userRole: UserRole): Promise<IBookingList> {
         try {
             let queryBase: FirebaseFirestore.Query = this.collection;
+
             if (filters?.serviceType) {
                 queryBase = queryBase.where('serviceName', '==', filters.serviceType);
             }
@@ -75,6 +76,11 @@ export class BookingsCollection {
 
             if (filters?.pagination?.pageSize) {
                 queryBase = queryBase.limit(filters?.pagination?.pageSize);
+            }
+
+            //if the API si called by the USER, it's retrieved only the bookings created by the user
+            if (userRole === UserRole.USER) {
+                queryBase = queryBase.where('createdBy', '==', currentUserUid);
             }
 
             const data = await queryBase

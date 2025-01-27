@@ -13,7 +13,7 @@ const bookingsRouter = Router();
 // GET /bookings
 bookingsRouter.get(
     '/',
-    (...args) => authenticateFirebaseToken(...args, UserRole.ADMIN),
+    (...args) => authenticateFirebaseToken(...args, UserRole.USER),
     getAllBookingsHandler
 );
 

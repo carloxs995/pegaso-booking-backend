@@ -4,6 +4,7 @@ import { BookingsCollection } from '../../database/collections/BookingsCollectio
 import { DITokens } from '../../di-tokens';
 import { BookingValidator } from '../../validators/BookingValidator';
 import { z } from 'zod';
+import { UsersService } from '../../services/UsersService';
 
 /**
  * Get all bookings from the database.
@@ -15,8 +16,10 @@ export async function getAllBookingsHandler(req: Request, res: Response): Promis
     try {
         const BookingValidator = container.resolve<BookingValidator>(DITokens.bookingValidator);
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
+        const UserService = container.resolve<UsersService>(DITokens.userService);
+
         const filters = BookingValidator.parseFilters(req.params);
-        const bookings = await BookingsCollection.getAllItems(filters);
+        const bookings = await BookingsCollection.getAllItems(filters, UserService.getUserUIDdByHeader(req), UserService.getUserRoledByHeader(req));
         res.status(200).json({ data: bookings });
     } catch (error: any) {
         if (error instanceof z.ZodError) {
