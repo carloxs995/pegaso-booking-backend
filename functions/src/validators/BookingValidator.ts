@@ -42,6 +42,7 @@ export class BookingValidator {
     });
 
     static readonly BookingsFiltersListSchema = z.object({
+        isFromAdminArea: z.boolean().default(false).optional(),
         serviceType: RoomValidator.RoomTypeEnum.optional(),
         checkInDate: z.string().refine(date => !date || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(date), {
             message: "Check-in date must be in ISO format (YYYY-MM-DDTHH:mm:ss.sssZ)."

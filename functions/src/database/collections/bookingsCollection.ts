@@ -79,7 +79,7 @@ export class BookingsCollection {
             }
 
             //if the API si called by the USER, it's retrieved only the bookings created by the user
-            if (userRole === UserRole.USER) {
+            if (userRole === UserRole.USER || (userRole === UserRole.ADMIN && !filters.isFromAdminArea)) {
                 queryBase = queryBase.where('createdBy', '==', currentUserUid);
             }
 
