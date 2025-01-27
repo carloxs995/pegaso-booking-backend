@@ -27,7 +27,7 @@ export class UsersService {
         try {
             const token = bearerToken.split(' ')[1];
             const decodedToken = await admin.auth().verifyIdToken(token);
-            // if (!decodedToken.email_verified) { //TODO: pensare se introdurre la verifica dell'email
+            // if (!decodedToken.email_verified) { //TODO: SI POTREBBE INTRODURRE LA VERIFICA DELL'EMAIL
             //     throw new Error('Email not verified');
             // }
 
@@ -85,7 +85,7 @@ export class UsersService {
     }
 
     async getUsersList(pageSize: number, pageToken?: string): Promise<{ items: UserBaseDetails[], pageToken: string | undefined }> {
-        if (!pageToken) {
+        if (!pageToken) { //TODO: check it
             pageToken = undefined;
         }
 

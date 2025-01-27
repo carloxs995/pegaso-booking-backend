@@ -20,7 +20,7 @@ export class RoomValidator {
         capacity: z.number().int().positive("Capacity must be a positive integer"),
         totalRooms: z.number().int().positive("totalRooms must be a positive integer"),
         pricePerNight: z.number().positive("Price per night must be a positive number"),
-        amenities: z.array(z.string()).min(1, "At least one amenity must be provided"),
+        amenities: z.array(z.string()).min(0, "At least one amenity must be provided"),
         available: z.boolean().optional().default(true),
         images: z.array(z.string()).min(1, "At least one image must be provided"),
     });
