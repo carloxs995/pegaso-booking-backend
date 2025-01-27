@@ -14,15 +14,39 @@ export class UsersService {
 
     constructor() { }
 
+    /**
+     * Imposta l'UID dell'utente e il ruolo negli header della richiesta.
+     * @param {Request} request - La richiesta HTTP.
+     * @param {string} uid - L'UID dell'utente.
+     * @param {UserRole} role - Il ruolo dell'utente.
+     * @returns {Request} - La richiesta HTTP modificata.
+     */
     setUserUIDOnRequestHeader = (request: Request, uid: string, role: UserRole): Request => {
         request.headers['x-firebase-user-uid'] = uid;
         request.headers['x-firebase-user-role'] = role.toString();
         return request;
     }
 
+    /**
+     * Ottiene l'UID dell'utente dagli header della richiesta.
+     * @param {Request} request - La richiesta HTTP.
+     * @returns {string} - L'UID dell'utente.
+     */
     getUserUIDdByHeader = (request: Request): string => (request.headers['x-firebase-user-uid'] ?? '') as string;
+
+    /**
+     * Ottiene il ruolo dell'utente dagli header della richiesta.
+     * @param {Request} request - La richiesta HTTP.
+     * @returns {UserRole} - Il ruolo dell'utente.
+     */
     getUserRoledByHeader = (request: Request): UserRole => Number(request.headers['x-firebase-user-role']) ?? UserRole.GUEST;
 
+    /**
+     * Verifica il token di autenticazione e restituisce il token decodificato.
+     * @param {string} bearerToken - Il token di autenticazione.
+     * @returns {Promise<admin.auth.DecodedIdToken>} - Il token decodificato.
+     * @throws {Error} - Se il token non è valido.
+     */
     private async _verifyToken(bearerToken: string): Promise<admin.auth.DecodedIdToken> {
         try {
             const token = bearerToken.split(' ')[1];
@@ -37,6 +61,12 @@ export class UsersService {
         }
     }
 
+    /**
+     * Crea un nuovo utente con i dati forniti.
+     * @param {UserBase} userData - I dati dell'utente.
+     * @returns {Promise<admin.auth.UserRecord>} - Il record dell'utente creato.
+     * @throws {Error} - Se la creazione dell'utente fallisce.
+     */
     async createUser(userData: UserBase): Promise<admin.auth.UserRecord> {
         try {
             const userRecord = await admin.auth().createUser({
@@ -46,7 +76,7 @@ export class UsersService {
                 disabled: false,
             });
 
-
+            // Imposta i custom claims per l'utente creato
             await admin.auth().setCustomUserClaims(
                 userRecord.uid,
                 this._getCustomClaims(userData)
@@ -58,6 +88,12 @@ export class UsersService {
         }
     }
 
+    /**
+     * Ottiene i dettagli dell'utente utilizzando il token di autenticazione.
+     * @param {string} bearerToken - Il token di autenticazione.
+     * @returns {Promise<UserBaseDetails>} - I dettagli dell'utente.
+     * @throws {Error} - Se il token non è valido o se non è possibile ottenere i dettagli dell'utente.
+     */
     async getUser(bearerToken: string): Promise<UserBaseDetails> {
         try {
             const { uid } = await this._verifyToken(bearerToken);
@@ -76,6 +112,11 @@ export class UsersService {
         }
     }
 
+    /**
+     * Restituisce i custom claims per l'utente.
+     * @param {UserBase} userData - I dati dell'utente.
+     * @returns {UserCustomClaims} - I custom claims dell'utente.
+     */
     private _getCustomClaims(userData: UserBase): UserCustomClaims {
         return {
             role: UsersService.USER_ROLE,
@@ -84,6 +125,12 @@ export class UsersService {
         }
     }
 
+    /**
+     * Ottiene una lista di utenti con paginazione.
+     * @param {number} pageSize - Il numero di utenti per pagina.
+     * @param {string} [pageToken] - Il token per la pagina successiva.
+     * @returns {Promise<{ items: UserBaseDetails[], pageToken: string | undefined }>} - La lista degli utenti e il token per la pagina successiva.
+     */
     async getUsersList(pageSize: number, pageToken?: string): Promise<{ items: UserBaseDetails[], pageToken: string | undefined }> {
         if (!pageToken) { //TODO: check it
             pageToken = undefined;

@@ -1,23 +1,89 @@
 import 'reflect-metadata';
 
-import { injectable } from "tsyringe";
 import { z } from 'zod';
-import { UserBase, UserLogin } from '../models/user.model';
+import { IRoomBase, RoomFilter } from '../models/room.model';
+import { injectable } from 'tsyringe';
 
 @injectable()
-export class UserValidator {
+export class RoomValidator {
+    static readonly RoomTypeEnum = z.enum( //TODO: pensare se dare la possibilità di creare più stanze custom
+        ['Standard', 'Deluxe', 'Suite', 'Luxury', 'Penthouse'],
+        {
+            message: 'RoomTypeSchema not valid'
+        }
+    );
+
     static readonly BaseSchema = z.object({
-        firstName: z.string().min(3, 'firstName is mandatory'),
-        lastName: z.string().min(3, 'lastName is mandatory'),
-        email: z.string().email('email is not valid'),
-        password: z.string().min(6, 'password is mandatory')
+        type: RoomValidator.RoomTypeEnum,
+        name: z.string().min(1, "At least 5 chars must be provided"),
+        description: z.string().max(500, 'Description cannot exceed 500 characters').optional(),
+        capacity: z.number().int().positive("Capacity must be a positive integer"),
+        totalRooms: z.number().int().positive("totalRooms must be a positive integer"),
+        pricePerNight: z.number().positive("Price per night must be a positive number"),
+        amenities: z.array(z.string()).min(0, "At least one amenity must be provided"),
+        available: z.boolean().optional().default(true),
+        images: z.array(z.string()).min(1, "At least one image must be provided"),
     });
 
-    parseCreation(request: UserBase): UserBase {
-        return UserValidator.BaseSchema.strict().strip().parse(request);
+    static readonly RoomsFilterBaseSchema = z.object({
+        serviceType: RoomValidator.RoomTypeEnum.optional(),
+        guests: z.preprocess((val) => {
+            if (typeof val === "string") {
+                return parseInt(val, 10);
+            }
+            return val;
+        }, z.number()
+            .int("The number of guests must be an integer.")
+            .min(1, "At least one guest is required.")
+            .optional()),
+        checkInDate: z.string()
+            .refine(date => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(date), {
+                message: "Check-in date must be in ISO format (YYYY-MM-DDTHH:mm:ss.sssZ)."
+            })
+            .optional(),
+        checkOutDate: z.string()
+            .refine(date => !date || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(date), {
+                message: "Check-out date must be in ISO format (YYYY-MM-DDTHH:mm:ss.sssZ)."
+            })
+            .optional(),
+    })
+        .strict()
+        .strip()
+        .refine(data => !data.checkOutDate || !data.checkInDate || new Date(data.checkOutDate) > new Date(data.checkInDate), {
+            message: "Check-out date must be after the check-in date.",
+            path: ["checkOutDate"]
+        });
+
+    /**
+     * Valida e analizza i dati di creazione della stanza.
+     * @param {IRoomBase} request - I dati della stanza.
+     * @returns {IRoomBase} - I dati della stanza validati.
+     */
+    parseCreation(request: IRoomBase) {
+        return RoomValidator.BaseSchema.strict().strip().parse(request);
     }
 
-    parseLogin(request: UserLogin): UserLogin {
-        return UserValidator.BaseSchema.omit({ firstName: true, lastName: true }).strict().strip().parse(request);
+    /**
+     * Valida e analizza i dati di aggiornamento della stanza.
+     * @param {IRoomBase} request - I dati della stanza.
+     * @returns {IRoomBase} - I dati della stanza validati.
+     */
+    parseUpdate(request: IRoomBase) {
+        return RoomValidator.BaseSchema
+            .omit({
+                type: true
+            })
+            .strict()
+            .strip()
+            .parse(request);
+    }
+
+    /**
+     * Valida e analizza i filtri delle stanze.
+     * @param {RoomFilter} filters - I filtri delle stanze.
+     * @returns {RoomFilter} - I filtri delle stanze validati.
+     */
+    parseFilters(filters: RoomFilter) {
+        return RoomValidator.RoomsFilterBaseSchema.parse(filters);
     }
 }

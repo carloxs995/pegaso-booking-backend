@@ -11,16 +11,19 @@ import { UsersService } from "./services/UsersService";
 import { UserValidator } from "./validators/UserValidator";
 
 // Registrazione delle dipendenze nel container DI
+// Register RoomValidator
 container.register(
     DITokens.roomValidator,
     { useFactory: instanceCachingFactory(() => new RoomValidator()) }
 );
 
+// Register BookingValidator
 container.register(
     DITokens.bookingValidator,
     { useFactory: instanceCachingFactory(() => new BookingValidator()) }
 );
 
+// Register BookingsCollection
 container.register(
     DITokens.bookingsCollection,
     {
@@ -30,18 +33,19 @@ container.register(
     }
 );
 
+// Register RoomsCollection
 container.register(
     DITokens.roomsCollection,
     {
         useFactory: instanceCachingFactory(
             c => new RoomsCollection(
-                c.resolve(DITokens.bookingsCollection
-                )
+                c.resolve(DITokens.bookingsCollection)
             )
         )
     }
 );
 
+// Register RoomsService
 container.register(
     DITokens.roomsService,
     {
@@ -54,6 +58,7 @@ container.register(
     }
 );
 
+// Register UsersService
 container.register(
     DITokens.userService,
     {
@@ -63,6 +68,7 @@ container.register(
     }
 );
 
+// Register UserValidator
 container.register(
     DITokens.userValidator,
     {

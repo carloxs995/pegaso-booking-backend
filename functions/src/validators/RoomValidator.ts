@@ -54,11 +54,21 @@ export class RoomValidator {
             path: ["checkOutDate"]
         });
 
-    parseCreation(request: IRoomBase) {
+    /**
+     * Valida e analizza i dati di creazione della stanza.
+     * @param {IRoomBase} request - I dati della stanza.
+     * @returns {IRoomBase} - I dati della stanza validati.
+     */
+    parseCreation(request: IRoomBase): IRoomBase {
         return RoomValidator.BaseSchema.strict().strip().parse(request);
     }
 
-    parseUpdate(request: IRoomBase) {
+    /**
+     * Valida e analizza i dati di aggiornamento della stanza.
+     * @param {IRoomBase} request - I dati della stanza.
+     * @returns {IRoomBase} - I dati della stanza validati.
+     */
+    parseUpdate(request: IRoomBase): Omit<IRoomBase, 'type'> {
         return RoomValidator.BaseSchema
             .omit({
                 type: true
@@ -68,7 +78,12 @@ export class RoomValidator {
             .parse(request);
     }
 
-    parseFilters(filters: RoomFilter) {
+    /**
+     * Valida e analizza i filtri delle stanze.
+     * @param {RoomFilter} filters - I filtri delle stanze.
+     * @returns {RoomFilter} - I filtri delle stanze validati.
+     */
+    parseFilters(filters: RoomFilter): RoomFilter {
         return RoomValidator.RoomsFilterBaseSchema.parse(filters);
     }
 }

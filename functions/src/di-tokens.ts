@@ -1,3 +1,4 @@
+// Definisce i token per l'iniezione delle dipendenze utilizzando i Symbol
 export const DITokens = {
     roomsService: Symbol("ROOMS_SERVICE"),
     roomValidator: Symbol("ROOM_VALIDATOR"),
