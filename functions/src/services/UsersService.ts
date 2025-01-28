@@ -136,7 +136,9 @@ export class UsersService {
             pageToken = undefined;
         }
 
-        const listUsersResult = await admin.auth().listUsers(pageSize, pageToken);
+        const listUsersResult = await admin.auth().listUsers(pageSize);
+
+        console.timeLog('listUserResult', listUsersResult);
 
         const usersListsRemapped = listUsersResult.users.map(
             user => ({
