@@ -18,7 +18,7 @@ export async function getAllBookingsHandler(req: Request, res: Response): Promis
         const BookingsCollection = container.resolve<BookingsCollection>(DITokens.bookingsCollection);
         const UserService = container.resolve<UsersService>(DITokens.userService);
 
-        const filters = BookingValidator.parseFilters(req.params);
+        const filters = BookingValidator.parseFilters(req.query);
         const bookings = await BookingsCollection.getAllItems(filters, UserService.getUserUIDdByHeader(req), UserService.getUserRoledByHeader(req));
         res.status(200).json({ data: bookings });
     } catch (error: any) {

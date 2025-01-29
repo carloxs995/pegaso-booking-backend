@@ -46,7 +46,10 @@ export class BookingValidator {
 
     // Definisce lo schema per i filtri delle prenotazioni
     static readonly BookingsFiltersListSchema = z.object({
-        isFromAdminArea: z.boolean().default(false).optional(),
+        isFromAdminArea: z.preprocess(
+            (val) => val === "true" ? true : val === "false" ? false : val,
+            z.boolean().default(false).optional()
+        ).default(false).optional(),
         serviceType: RoomValidator.RoomTypeEnum.optional(),
         checkInDate: z.string().refine(date => !date || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(date), {
             message: "Check-in date must be in ISO format (YYYY-MM-DDTHH:mm:ss.sssZ)."
@@ -131,6 +134,6 @@ export class BookingValidator {
      * @returns {IBookingsFiltersListSchema} - I filtri delle prenotazioni validati.
      */
     parseFilters(filters: IBookingsFiltersListSchema): IBookingsFiltersListSchema {
-        return BookingValidator.BookingsFiltersListSchema.strict().strip().parse(filters);
+        return BookingValidator.BookingsFiltersListSchema.parse(filters);
     }
 }
