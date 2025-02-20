@@ -1,12 +1,11 @@
 openapi: 3.0.0
 info:
-  title: Hotel Booking API
-  description: API for managing hotel room bookings and user accounts.
+  title: BookingApp API
+  description: API for managing rooms, bookings and user accounts.
   version: 1.0.0
 
 servers:
   - url: https://us-central1-pegaso-booking.cloudfunctions.net/api
-    description: Production server
 
 paths:
   /rooms/check-availability/{id}:
