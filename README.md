@@ -15,36 +15,9 @@ Le API del progetto sono accessibili al seguente endpoint:
 - **Zod** - Validazione degli schemi
 - **Tsyringe** - Dependency injection per TypeScript
 
-## Endpoint API
+## Documentazione API
 
-### Stanze (Rooms)
-
-| Metodo | Endpoint                          | Descrizione                      | Autenticazione minima |
-|--------|-----------------------------------|----------------------------------|----------------|
-| GET    | `/rooms/check-availability/:id`   | Controlla la disponibilità       | Guest           |
-| GET    | `/rooms/:id/details`              | Ottieni dettagli stanza          | Guest           |
-| POST   | `/rooms`                           | Crea una stanza                  | Admin           |
-| GET    | `/rooms`                           | Ottieni tutte le stanze           | Guest           |
-| PUT    | `/rooms/:id`                       | Aggiorna dettagli stanza         | Admin           |
-
-### Prenotazioni (Bookings)
-
-| Metodo | Endpoint                          | Descrizione                      | Autenticazione minima |
-|--------|-----------------------------------|----------------------------------|----------------|
-| GET    | `/bookings`                        | Ottieni tutte le prenotazioni    | User            |
-| GET    | `/bookings/:id`                     | Ottieni dettagli prenotazione    | User            |
-| POST   | `/bookings`                         | Crea una prenotazione            | User            |
-| PUT    | `/bookings/:id`                     | Modifica prenotazione            | User            |
-| PUT    | `/bookings/:id/confirm`             | Conferma pagamento               | Admin           |
-| DELETE | `/bookings/:id`                     | Imposta "annullata" la prenotazione             | User            |
-
-### Utenti (Users)
-
-| Metodo | Endpoint                          | Descrizione                      | Autenticazione minima |
-|--------|-----------------------------------|----------------------------------|----------------|
-| GET    | `/users`                           | Ottieni tutti gli utenti         | Admin           |
-| POST   | `/users`                           | Crea un nuovo utente             | Guest           |
-| GET    | `/users/me`                        | Ottieni informazioni utente      | User            |
+📄 [View OpenAPI Specification](./functions/openapi.spec.yml)
 
 ## Modelli di Dati
 
