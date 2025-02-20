@@ -17,10 +17,20 @@ components:
 security:
   - bearerAuth: []
 
+tags:
+  - name: Users
+    description: "Endpoints for user management"
+  - name: Rooms
+    description: "Endpoints for managing rooms"
+  - name: Bookings
+    description: "Endpoints for booking management"
+
 paths:
   /rooms/check-availability/{id}:
     get:
       summary: Check room availability
+      tags:
+        - Rooms
       description: Checks if a room is available for booking.
       security: []
       parameters:
@@ -71,6 +81,8 @@ paths:
     get:
       summary: Get room details
       description: Retrieves details of a specific room.
+      tags:
+        - Rooms
       security: []
       parameters:
         - name: id
@@ -115,6 +127,8 @@ paths:
     post:
       summary: Create a new room
       description: Adds a new room to the system.
+      tags:
+        - Rooms
       security:
         - bearerAuth: []
       requestBody:
@@ -170,6 +184,8 @@ paths:
     get:
       summary: Get all rooms
       description: Retrieves a list of all available rooms.
+      tags:
+        - Rooms
       security: []
       responses:
         '200':
@@ -215,6 +231,8 @@ paths:
     put:
       summary: Update room details
       description: Updates the details of an existing room.
+      tags:
+        - Rooms
       security:
         - bearerAuth: []
       requestBody:
@@ -258,6 +276,8 @@ paths:
   /bookings:
     get:
       summary: Get all bookings
+      tags:
+        - Bookings
       parameters:
         - name: isFromAdminArea
           in: query
@@ -442,6 +462,8 @@ paths:
   /bookings/{id}:
     get:
       summary: Get booking details
+      tags:
+        - Bookings
       security:
         - bearerAuth: []
       parameters:
@@ -583,6 +605,8 @@ paths:
   /bookings/{id}/confirm:
     put:
       summary: Confirm a booking payment
+      tags:
+        - Bookings
       security:
         - bearerAuth: []
       parameters:
@@ -599,6 +623,8 @@ paths:
     get:
       summary: Get all users
       description: Retrieves a list of all users.
+      tags:
+        - Users
       security:
         - bearerAuth: []
       parameters:
@@ -649,6 +675,8 @@ paths:
     post:
         summary: Create a new user
         description: Allows a guest to register as a new user.
+        tags:
+          - Users
         security: []
         requestBody:
           required: true
@@ -680,6 +708,8 @@ paths:
   /users/me:
     get:
       summary: Get user profile
+      tags:
+        - Users
       security:
         - bearerAuth: []
       responses:
