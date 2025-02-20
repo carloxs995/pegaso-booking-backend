@@ -123,6 +123,50 @@ paths:
                     type: array
                     items:
                       type: string
+    put:
+      summary: Update room details
+      description: Updates the details of an existing room.
+      tags:
+        - Rooms
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                description:
+                  type: string
+                  maxLength: 500
+                capacity:
+                  type: integer
+                  minimum: 1
+                totalRooms:
+                  type: integer
+                  minimum: 1
+                pricePerNight:
+                  type: number
+                  minimum: 0.01
+                amenities:
+                  type: array
+                  items:
+                    type: string
+                available:
+                  type: boolean
+                  default: true
+                images:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+      responses:
+        '200':
+          description: Room updated successfully.
   /rooms:
     post:
       summary: Create a new room
@@ -226,52 +270,6 @@ paths:
                           type: array
                           items:
                             type: string
-
-  /rooms/{id}:
-    put:
-      summary: Update room details
-      description: Updates the details of an existing room.
-      tags:
-        - Rooms
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  minLength: 1
-                description:
-                  type: string
-                  maxLength: 500
-                capacity:
-                  type: integer
-                  minimum: 1
-                totalRooms:
-                  type: integer
-                  minimum: 1
-                pricePerNight:
-                  type: number
-                  minimum: 0.01
-                amenities:
-                  type: array
-                  items:
-                    type: string
-                available:
-                  type: boolean
-                  default: true
-                images:
-                  type: array
-                  items:
-                    type: string
-                  minItems: 1
-      responses:
-        '200':
-          description: Room updated successfully.
 
   /bookings:
     get:
