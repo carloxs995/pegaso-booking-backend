@@ -392,6 +392,8 @@ paths:
                     type: integer
     post:
       summary: Create a booking
+      tags:
+        - Bookings
       security:
         - bearerAuth: []
       requestBody:
@@ -523,6 +525,8 @@ paths:
                     type: string
     put:
       summary: Modify a booking
+      tags:
+        - Bookings
       security:
         - bearerAuth: []
       parameters:
@@ -584,6 +588,8 @@ paths:
           description: Booking updated successfully.
     delete:
       summary: Cancel a booking
+      tags:
+        - Bookings
       security:
         - bearerAuth: []
       parameters:
