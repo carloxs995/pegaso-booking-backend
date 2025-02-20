@@ -77,7 +77,7 @@ paths:
                   totalPrice:
                     type: number
                     description: "Total price for the requested stay."
-  /rooms/{id}/details:
+  /rooms/{id}:
     get:
       summary: Get room details
       description: Retrieves details of a specific room.
