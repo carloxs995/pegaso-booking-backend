@@ -17,7 +17,7 @@ Le API del progetto sono accessibili al seguente endpoint:
 
 ## Documentazione API
 
-📄 [View OpenAPI Specification](./functions/openapi.spec.yml)
+📄 [View OpenAPI Specification](https://carloxs995.github.io/pegaso-booking-backend/#/)
 
 ## Modelli di Dati
 
